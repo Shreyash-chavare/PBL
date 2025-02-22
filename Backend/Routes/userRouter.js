@@ -26,6 +26,6 @@ router.get('/profile',isLoggedIn,(req,res)=>{
 
 router.post('/createusers',authuser);
 router.post('/login',userlogin);
-router.get('/Home',isLoggedIn);
+router.get('/home',isLoggedIn);
 router.get('/logout',logoutuser);
 export default router;
