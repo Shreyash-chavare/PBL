@@ -10,7 +10,26 @@ import isLoggedIn from './middleware/isloggedin.js';
 const Mongo=mongodb
 import dotenv from 'dotenv';
 dotenv.config();
-const __dirname=path.dirname(fileURLToPath(import.meta.url))
+
+
+const __filename = fileURLToPath(import.meta.url); 
+let __dirname = path.dirname(__filename); 
+app.use('/',userRouter);
+
+//Renders the react home page immediately after website loads
+const parentDir = path.join(__dirname, "..")
+const reactPath = path.join(parentDir, "Frontend", "dist");
+app.use(express.static(reactPath));
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(reactPath, "index.html"));
+});
+
+
+
+
+__dirname=path.dirname(fileURLToPath(import.meta.url))
+
 app.set('view engine','ejs');
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -26,6 +45,7 @@ app.use(session({
     cookie: { secure: false } 
 }))
 
+
 // middleware to set user in response
 app.use((req, res, next) => {
     if (req.session.user) {
@@ -34,6 +54,7 @@ app.use((req, res, next) => {
     next();
 });
 
+<<<<<<< HEAD
 app.use('/',userRouter);
 app.get('/',isLoggedIn,(req,res)=>{
     if(req.isAuthenticated){
@@ -44,6 +65,9 @@ app.get('/',isLoggedIn,(req,res)=>{
     }  
     
 })
+=======
+
+>>>>>>> a0b257e397bb912562b78c09dea65c0626ec0874
 
 
 
