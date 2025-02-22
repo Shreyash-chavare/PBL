@@ -5,19 +5,23 @@ const isLoggedIn = async (req, res, next) => {
     try {
         const token = req.cookies["user-token"];
         if (!token) {
-            return res.status(401).send("Access denied. No token provided.");
+            req.isAuthenticated=false;
+            return next();
         }
         const decoded = jwt.verify(token, process.env.JWT_TOKEN);  
         const user = await userModel.findById(decoded.id);
 
         if (!user) {
-            return res.status(404).send("User not found.");
+            req.isAuthenticated=false;
+            return next();
         }
         req.user = user;
+        req.isAuthenticated=true;
         next();
     } catch (err) {
         console.error(err);
-        res.status(401).send("Invalid token");
+        req.isAuthenticated=false;
+       return next();
     }
 };
 

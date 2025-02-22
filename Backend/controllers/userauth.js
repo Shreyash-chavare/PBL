@@ -17,10 +17,10 @@ const user=async(req,res)=>{
                 })
                 const token=tokenuser(usercreate);
                 res.cookie("user-token",token);
-                res.status(201).send(usercreate);
+                 res.redirect('/login');
             }
     else{
-        return res.status(505).send(`User ${fullname} Already exist`);
+        return res.status(505).send(`User ${username} Already exist`);
     }
     }catch(err){
         console.log(err);

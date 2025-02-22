@@ -13,7 +13,7 @@ const userlog = async (req, res) => {
             if (userauthenticate) {
                 const token = tokenuser(IsUser); 
                 res.cookie("user-token", token);
-                res.session.user = IsUser;
+                req.session.user = IsUser;
                 console.log("Login successfully");
                 res.redirect('/home')
 
