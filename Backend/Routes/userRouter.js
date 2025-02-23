@@ -1,6 +1,6 @@
 import express from 'express'
 import authuser from '../controllers/userauth.js'
-import userlogin from '../controllers/userlogin.js'
+import userlog from '../controllers/userlogin.js'
 import isLoggedIn from '../middleware/isloggedin.js';
 import logoutuser from '../controllers/logout.js';
 import user from '../models/usermodel.js';
@@ -25,7 +25,7 @@ router.get('/profile',isLoggedIn,(req,res)=>{
 })
 
 router.post('/createusers',authuser);
-router.post('/login',userlogin);
+router.post('/login',userlog);
 router.get('/home',isLoggedIn);
 router.get('/logout',logoutuser);
 export default router;

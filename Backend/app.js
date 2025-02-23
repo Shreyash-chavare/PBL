@@ -11,6 +11,18 @@ const Mongo=mongodb
 import dotenv from 'dotenv';
 dotenv.config();
 
+app.set('view engine','ejs');
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(cookieparser());
+
+app.use(session({
+    secret: process.env.JWT_TOKEN,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } 
+}))
+
 
 const __filename = fileURLToPath(import.meta.url); 
 let __dirname = path.dirname(__filename); 
@@ -26,24 +38,9 @@ app.get("*", (req, res) => {
 });
 
 
-
-
 __dirname=path.dirname(fileURLToPath(import.meta.url))
 
-app.set('view engine','ejs');
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(cookieparser());
 app.use(express.static(path.join(__dirname,'public')));
-
-        
-
-app.use(session({
-    secret: process.env.JWT_TOKEN,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false } 
-}))
 
 
 // middleware to set user in response
@@ -54,8 +51,6 @@ app.use((req, res, next) => {
     next();
 });
 
-<<<<<<< HEAD
-app.use('/',userRouter);
 app.get('/',isLoggedIn,(req,res)=>{
     if(req.isAuthenticated){
         res.render('home');
@@ -65,10 +60,6 @@ app.get('/',isLoggedIn,(req,res)=>{
     }  
     
 })
-=======
-
->>>>>>> a0b257e397bb912562b78c09dea65c0626ec0874
-
 
 
 Mongo.then(()=>{

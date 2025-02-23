@@ -1,8 +1,12 @@
 import usermodel from '../models/usermodel.js'
 import tokenuser from '../utils/usertoken.js'
 import bcrypt from 'bcrypt'
-const user=async(req,res)=>{
-    const {fullname,username,password,Email}=req.body;
+const authuser=async(req,res)=>{
+    const fullname = req.body.fullname;
+    const username = req.body.username;
+    const password = req.body.password;
+    const Email = req.body.Email;
+
     try{
 
         let createduser=await usermodel.findOne({Email});
@@ -29,4 +33,4 @@ const user=async(req,res)=>{
 
     
 } 
-export default user;
+export default authuser;

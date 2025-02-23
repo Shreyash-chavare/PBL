@@ -18,7 +18,7 @@ const userlog = async (req, res) => {
                 res.redirect('/home')
 
             } else {
-                return res.status(401).send("Something went wrong");
+                return res.status(401).send("Something went wrong IsUser is false");
             }
         } else {
             return res.status(404).send("User not found");
