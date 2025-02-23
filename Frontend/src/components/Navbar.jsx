@@ -38,9 +38,8 @@ const Navbar = () => {
                         </ul>
                     </div>
                 </div>
-                <div className="profile">
-                    <div className='h-6 w-6 border-2 border-black rounded-full'></div>
-                </div>
+                
+                
             </div>
         </div>
     )

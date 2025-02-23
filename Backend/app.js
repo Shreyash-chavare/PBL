@@ -11,6 +11,18 @@ const Mongo=mongodb
 import dotenv from 'dotenv';
 dotenv.config();
 
+app.set('view engine','ejs');
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(cookieparser());
+
+app.use(session({
+    secret: process.env.JWT_TOKEN,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false } 
+}))
+
 
 const __filename = fileURLToPath(import.meta.url); 
 let __dirname = path.dirname(__filename); 
@@ -31,20 +43,13 @@ app.get("*", (req, res) => {
 });
 
 
-
-
 __dirname=path.dirname(fileURLToPath(import.meta.url))
 
+<<<<<<< HEAD
 
-
-        
-
-app.use(session({
-    secret: process.env.JWT_TOKEN,
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false } 
-}))
+=======
+app.use(express.static(path.join(__dirname,'public')));
+>>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
 
 
 // middleware to set user in response
@@ -55,7 +60,10 @@ app.use((req, res, next) => {
     next();
 });
 
+<<<<<<< HEAD
 app.use('/',userRouter);
+=======
+>>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
 app.get('/',isLoggedIn,(req,res)=>{
     if(req.isAuthenticated){
         res.render('home');
@@ -65,7 +73,10 @@ app.get('/',isLoggedIn,(req,res)=>{
     }  
     
 })
+<<<<<<< HEAD
 
+=======
+>>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
 
 
 Mongo.then(()=>{
