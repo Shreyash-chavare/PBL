@@ -6,7 +6,6 @@ import './Fat.css'
 
 const Fat = () => {
   const navigateToEJS = (route) =>{
-    console.log(route)
     window.location.href = `/api/${route}`;
   }
 

@@ -7,23 +7,29 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 import user from '../models/usermodel.js';
 import userModel from '../models/usermodel.js';
+
 const router=express.Router();
-router.get('/page',(req,res)=>{
-    res.render('front');
-})
-router.get('/login',(req,res)=>{
-    res.render('login')
-})
-
-
 const __filename = fileURLToPath(import.meta.url); 
 let __dirname = path.dirname(__filename); 
 let parentDir = path.join(__dirname, "..")
 parentDir = path.join(parentDir, "..")
-const reactPath = path.join(parentDir, "Frontend", "dist");
-router.get('/home',isLoggedIn,(req,res)=>{
-    res.sendFile(path.join(reactPath, "dashboard.html"))
+let reactPath = path.join(parentDir, "Frontend", "dist");
+
+
+
+router.get('/page',(req,res)=>{
+    res.render('front');
 })
+router.get('/api/login',(req,res)=>{
+
+    res.render('login')
+})
+
+const dashpath = path.join(reactPath, "public")
+router.get('/home',isLoggedIn,(req,res)=>{
+    res.sendFile(path.join(dashpath, "dashboard.html"))
+})
+
 router.get('/profile',isLoggedIn,(req,res)=>{
         const user = req.session.user;
         if (user) {

@@ -45,11 +45,7 @@ app.get("*", (req, res) => {
 
 __dirname=path.dirname(fileURLToPath(import.meta.url))
 
-<<<<<<< HEAD
-
-=======
 app.use(express.static(path.join(__dirname,'public')));
->>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
 
 
 // middleware to set user in response
@@ -60,10 +56,7 @@ app.use((req, res, next) => {
     next();
 });
 
-<<<<<<< HEAD
 app.use('/',userRouter);
-=======
->>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
 app.get('/',isLoggedIn,(req,res)=>{
     if(req.isAuthenticated){
         res.render('home');
@@ -73,10 +66,6 @@ app.get('/',isLoggedIn,(req,res)=>{
     }  
     
 })
-<<<<<<< HEAD
-
-=======
->>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
 
 
 Mongo.then(()=>{

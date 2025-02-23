@@ -11,18 +11,25 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        dashboard: resolve(__dirname, 'dashboard.html')
+        main: resolve(__dirname, "index.html"),
+        dashboard: resolve(__dirname, 'public/dashboard.html')
       }
     }
   },
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', 
+        target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '') 
+        rewrite: (path) => {
+          console.log("Original path:", path);
+          const newPath = path.replace(/^\/api/, '/');
+          console.log("Rewritten path:", newPath);
+          return newPath;
+        }
       }
     }
   }
+  
 })
