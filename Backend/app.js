@@ -14,6 +14,11 @@ dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url); 
 let __dirname = path.dirname(__filename); 
+app.set('view engine','ejs');
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(cookieparser());
+app.use(express.static(path.join(__dirname,'public')));
 app.use('/',userRouter);
 
 //Renders the react home page immediately after website loads
@@ -30,11 +35,7 @@ app.get("*", (req, res) => {
 
 __dirname=path.dirname(fileURLToPath(import.meta.url))
 
-app.set('view engine','ejs');
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(cookieparser());
-app.use(express.static(path.join(__dirname,'public')));
+
 
         
 
@@ -54,7 +55,6 @@ app.use((req, res, next) => {
     next();
 });
 
-<<<<<<< HEAD
 app.use('/',userRouter);
 app.get('/',isLoggedIn,(req,res)=>{
     if(req.isAuthenticated){
@@ -65,9 +65,6 @@ app.get('/',isLoggedIn,(req,res)=>{
     }  
     
 })
-=======
-
->>>>>>> a0b257e397bb912562b78c09dea65c0626ec0874
 
 
 
