@@ -31,6 +31,13 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieparser());
 app.use(express.static(path.join(__dirname,'public')));
+// middleware to set user in response
+app.use((req, res, next) => {
+    if (req.session.user) {
+        res.locals.user = req.session.user;
+    }
+    next();
+});
 app.use('/',userRouter);
 
 //Renders the react home page immediately after website loads
@@ -45,38 +52,21 @@ app.get("*", (req, res) => {
 
 __dirname=path.dirname(fileURLToPath(import.meta.url))
 
-<<<<<<< HEAD
 
-=======
 app.use(express.static(path.join(__dirname,'public')));
->>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
 
 
-// middleware to set user in response
-app.use((req, res, next) => {
-    if (req.session.user) {
-        res.locals.user = req.session.user;
-    }
-    next();
-});
 
-<<<<<<< HEAD
-app.use('/',userRouter);
-=======
->>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
-app.get('/',isLoggedIn,(req,res)=>{
-    if(req.isAuthenticated){
-        res.render('home');
-    }
-    else{
-        res.redirect('/login');
-    }  
+
+// app.get('/',isLoggedIn,(req,res)=>{
+//     if(req.isAuthenticated){
+//         res.render('home');
+//     }
+//     else{
+//         res.redirect('/login');
+//     }  
     
-})
-<<<<<<< HEAD
-
-=======
->>>>>>> 09cc1e87732dd5cb3fc340007a5adf0610d303b6
+// })
 
 
 Mongo.then(()=>{

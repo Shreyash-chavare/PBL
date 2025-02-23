@@ -6,8 +6,8 @@ import logoutuser from '../controllers/logout.js';
 import user from '../models/usermodel.js';
 import userModel from '../models/usermodel.js';
 const router=express.Router();
-router.get('/page',(req,res)=>{
-    res.render('front');
+router.get('/signup',(req,res)=>{
+    res.render('signup');
 })
 router.get('/login',(req,res)=>{
     res.render('login')
