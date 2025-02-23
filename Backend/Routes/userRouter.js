@@ -3,6 +3,8 @@ import authuser from '../controllers/userauth.js'
 import userlog from '../controllers/userlogin.js'
 import isLoggedIn from '../middleware/isloggedin.js';
 import logoutuser from '../controllers/logout.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
 import user from '../models/usermodel.js';
 import userModel from '../models/usermodel.js';
 const router=express.Router();
@@ -12,8 +14,15 @@ router.get('/page',(req,res)=>{
 router.get('/login',(req,res)=>{
     res.render('login')
 })
+
+
+const __filename = fileURLToPath(import.meta.url); 
+let __dirname = path.dirname(__filename); 
+let parentDir = path.join(__dirname, "..")
+parentDir = path.join(parentDir, "..")
+const reactPath = path.join(parentDir, "Frontend", "dist");
 router.get('/home',isLoggedIn,(req,res)=>{
-    res.render('home')
+    res.sendFile(path.join(reactPath, "dashboard.html"))
 })
 router.get('/profile',isLoggedIn,(req,res)=>{
         const user = req.session.user;
