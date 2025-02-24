@@ -20,8 +20,8 @@ let reactPath = path.join(parentDir, "Frontend", "dist");
 router.get('/page',(req,res)=>{
     res.render('front');
 })
-router.get('/api/login',(req,res)=>{
 
+router.get('/api/login',(req,res)=>{
     res.render('login')
 })
 
