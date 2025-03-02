@@ -1,0 +1,57 @@
+.navright div{
+    display: flex;
+    align-items: center;
+}
+.nav{
+    height: 8%;
+}
+
+.language{
+    position:absolute;
+    right: 12%;
+    top: 2%;
+}
+
+.ide{
+    position: absolute;
+    right: 9%;
+    top: 2%;
+    text-align: left;
+    width: 20px;
+}
+
+.idedropdown ul{
+    display:none;
+    position: relative;
+    text-align: left;
+    background-color: rgb(230, 230, 230);
+    z-index: 1;
+}
+
+.idedropdown ul li{
+    padding: 5px 1px;
+    border: 1px solid grey;
+}
+
+.langdropdown ul{
+    display: none;
+    text-align: left;
+    background-color: rgb(230, 230, 230);
+    z-index: 1;
+}
+
+.langdropdown ul li{
+    padding: 5px 8px;
+    border: 1px solid grey;
+}
+
+.language:hover .langdropdown ul{
+    display: block;
+    z-index: 1;
+    box-shadow: gray;
+}
+
+.ide:hover .idedropdown ul{
+    display: block;
+    z-index: 1;
+}
