@@ -21,6 +21,10 @@ let __dirname = path.dirname(__filename);
 
 
 router.get('/api/check',isLoggedIn);
+router.get('/page',(req,res)=>{
+    res.render('front');
+})
+
 router.get('/api/login',(req,res)=>{
     res.render('login')
 })
