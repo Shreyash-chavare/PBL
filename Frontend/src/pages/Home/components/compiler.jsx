@@ -65,8 +65,8 @@ const JDoodleCompiler = () => {
                         ></textarea>
                         <button
                             onClick={handleRunCode}
-                            className="absolute top-13 right-0 mt-2 rounded-lg font-semibold text-md"
-                        >
+                            className="run-button"            
+                        >                               {/* absolute top-13 right-0 mt-2 rounded-lg font-semibold text-md */}
                             Run Code
                         </button>
                     </div>
