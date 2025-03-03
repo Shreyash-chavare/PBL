@@ -1,7 +1,7 @@
-
+import { Link } from 'react-router-dom'
 import './App.css'
 
-function App() {
+function Dashboard() {
 
   return (
     <>
@@ -30,4 +30,4 @@ function App() {
   )
 }
 
-export default App
+export default Dashboard
