@@ -46,14 +46,7 @@ app.use((req, res, next) => {
 });
 app.use('/',userRouter);
 
-//Renders the react home page immediately after website loads
-// const parentDir = path.join(__dirname, "..")
-// const reactPath = path.join(parentDir, "Frontend", "dist");
-// app.use(express.static(reactPath));
 
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(reactPath, "index.html"));
-// });
 
 
 __dirname=path.dirname(fileURLToPath(import.meta.url))
@@ -126,4 +119,11 @@ Mongo.then(()=>{
 })
 
 
-app.listen(3000);
+app.listen(3000);//Renders the react home page immediately after website loads
+// const parentDir = path.join(__dirname, "..")
+// const reactPath = path.join(parentDir, "Frontend", "dist");
+// app.use(express.static(reactPath));
+
+// app.get("*", (req, res) => {
+//     res.sendFile(path.join(reactPath, "index.html"));
+// });
