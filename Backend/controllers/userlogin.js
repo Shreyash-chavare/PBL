@@ -1,6 +1,6 @@
 import userModel from '../models/usermodel.js';
 import tokenuser from '../utils/usertoken.js';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const userlog = async (req, res) => {
     try {

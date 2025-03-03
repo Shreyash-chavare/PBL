@@ -1,6 +1,6 @@
 import usermodel from '../models/usermodel.js'
 import tokenuser from '../utils/usertoken.js'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 const authuser=async(req,res)=>{
     const fullname = req.body.fullname;
     const username = req.body.username;

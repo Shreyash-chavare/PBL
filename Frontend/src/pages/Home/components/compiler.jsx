@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import './index.css'; // Ensure you have this import to apply Tailwind CSS
+import './compiler.css';
 
 const JDoodleCompiler = () => {
     const [language, setLanguage] = useState("python3");
@@ -36,7 +37,7 @@ const JDoodleCompiler = () => {
     };
 
     return (
-        <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
+        <div className="flex flex-col items-center h-screen bg-gray-100 p-4">
             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
                 <h1 className="text-4xl font-bold mb-6 text-center">JDoodle Compiler</h1>
 
@@ -64,14 +65,14 @@ const JDoodleCompiler = () => {
                         ></textarea>
                         <button
                             onClick={handleRunCode}
-                            className="absolute top-0 right-0 mt-2 mr-2 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-semibold text-md"
+                            className="absolute top-13 right-0 mt-2 rounded-lg font-semibold text-md"
                         >
                             Run Code
                         </button>
                     </div>
                 </div>
 
-                <div className="flex flex-col lg:flex-row gap-6 mb-6">
+                <div className="flex flex-col lg:flex-row gap-6 mb-6"> {/* i/o box */}
                     <div className="w-full lg:w-1/2">
                         <label className="block text-left mb-2 text-lg font-medium">Input (Optional):</label>
                         <textarea
