@@ -4,9 +4,15 @@ import bcrypt from 'bcryptjs';
 
 const userlog = async (req, res) => {
     try {
-        let { Email, password } = req.body;
+        let { email, password } = req.body;
+        console.log(req.body)
+        let Email = email 
+
         const IsUser = await userModel.findOne({ Email });
-        console.log(IsUser.Email);
+
+        if (!IsUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
         
         if (IsUser) {
             const userauthenticate = await bcrypt.compare(password, IsUser.password);
@@ -15,17 +21,17 @@ const userlog = async (req, res) => {
                 res.cookie("user-token", token);
                 req.session.user = IsUser;
                 console.log("Login successfully");
-                res.redirect('/home')
+                res.json({ success: true, message: "Login successful" });
 
             } else {
-                return res.status(401).send("Something went wrong IsUser is false");
+                return res.status(401).json("Something went wrong IsUser is false");
             }
         } else {
-            return res.status(404).send("User not found");
+            return res.status(404).json("User not found");
         }
     } catch (error) {
         console.error("Error during login:", error);
-        return res.status(500).send("Something went wrong");
+        return res.status(500).json("Something went wrong");
     }
 };
 

@@ -24,7 +24,6 @@ app.use(session({
     cookie: { secure: false } 
 }))
 
-app.use(cors());
 const __filename = fileURLToPath(import.meta.url); 
 let __dirname = path.dirname(__filename); 
 app.use(cors({
@@ -33,9 +32,7 @@ app.use(cors({
 }));
 
 app.set('view engine','ejs');
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-app.use(cookieparser());
+
 app.use(express.static(path.join(__dirname,'public')));
 // middleware to set user in response
 app.use((req, res, next) => {
@@ -52,7 +49,7 @@ app.use('/',userRouter);
 __dirname=path.dirname(fileURLToPath(import.meta.url))
 
 
-app.use(express.static(path.join(__dirname,'public')));
+// app.use(express.static(path.join(__dirname,'public')));
 
 
 

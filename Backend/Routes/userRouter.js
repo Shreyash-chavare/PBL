@@ -31,7 +31,17 @@ router.get('/api/login',(req,res)=>{
 
 // const dashpath = path.join(reactPath, "public")
 router.get('/home',isLoggedIn,(req,res)=>{
-    res.sendFile(path.join(dashpath, "dashboard.html"))
+    if(req.session.user){
+        console.log('worked')
+        res.json({loggedin : true})
+    } else{
+        res.json({loggedin : false})
+    }
+})
+
+router.get("/test",(req,res)=>{
+    console.log("test")
+    res.send("test")
 })
 
 // router.get('/profile',isLoggedIn,(req,res)=>{
@@ -45,6 +55,5 @@ router.get('/home',isLoggedIn,(req,res)=>{
 
 router.post('/createusers',authuser);
 router.post('/login',userlog);
-router.get('/home',isLoggedIn);
 router.get('/logout',logoutuser);
 export default router;

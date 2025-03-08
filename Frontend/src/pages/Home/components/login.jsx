@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useAuthstore } from '../../../stores/auth';
 import { Link } from 'react-router-dom';
 import './index.css'; 
+import { onSignin } from '../../../signin';
+import { useNavigate } from 'react-router-dom';
+// import { AuthContext } from '../../../authprov';
+
+
 
 const Login = () => {
-    const [showPassword, setShowPassword] = useState(false);
+  // const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: ""
@@ -26,11 +32,22 @@ const Login = () => {
       login(formData);
     }
   };
+
+  const navigate = useNavigate();
+
+
+
+
   return (
     <div className="flex items-center justify-center h-screen bg-gradient-to-r from-blue-900 to-blue-400">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-3xl font-bold text-center mb-6">Login to your account</h2>
-        <form action="/login" method="POST" className="space-y-6">
+        <form onSubmit={async (e) => {
+    e.preventDefault();  // ✅ Prevent form from submitting traditionally
+
+    // Call your login function
+    await onSignin(formData, navigate);
+  }} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
