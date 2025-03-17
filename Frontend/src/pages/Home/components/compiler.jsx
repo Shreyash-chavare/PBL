@@ -37,7 +37,7 @@ const JDoodleCompiler = () => {
     };
 
     return (
-        <div className="flex flex-col items-center h-screen bg-gray-100 p-4">
+        <div className="flex flex-col items-center h-fill bg-gray-100 p-4">
             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
                 <h1 className="text-4xl font-bold mb-6 text-center">JDoodle Compiler</h1>
 

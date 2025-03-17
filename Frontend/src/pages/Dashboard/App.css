@@ -65,3 +65,13 @@ html, body {
 .leave-button:hover {
   background-color: brown;
 }
+
+h1{
+  font-weight: bold;
+  font-size: 190%;
+}
+
+h2{
+  font-size: 120%;
+  font-weight: 450;
+}
