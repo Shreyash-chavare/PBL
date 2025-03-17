@@ -3,9 +3,11 @@ import './index.css'; // Ensure you have this import to apply Tailwind CSS
 import { useAuthstore } from '../../../stores/auth';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username:"",
     fullname: "",
@@ -24,13 +26,45 @@ const Signup = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    const success=validateForm();
-    if(success===true){
-      signup(formData);
+    e.stopPropagation();
+    const success = validateForm();
+    
+    if (success === true) {
+      try {
+        const response = await fetch("http://localhost:3000/createusers", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formData),
+          credentials: "include"
+        });
+  
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+  
+        const data = await response.json();
+        console.log('Server response:', data);
+        
+        if (data.success) {
+          toast.success("Account created successfully!");
+          navigate('/api/login');
+        } else {
+          toast.error(data.message || "Failed to create account");
+        }
+      } catch (error) {
+        console.error('Error during signup:', error);
+        toast.error("Failed to create account. Please try again.");
+      }
     }
   };
+
+
+
   return (
     <div className="flex justify-center items-center h-screen bg-gradient-to-r from-blue-900 to-blue-400">
       <div className="flex bg-white rounded-lg shadow-lg overflow-hidden w-3/4 max-w-4xl mt-4">
@@ -41,7 +75,7 @@ const Signup = () => {
         <div className="w-1/2 p-8">
           <div className="mb-8">
             <h2 className="text-2xl font-bold mb-4">Create an account</h2>
-            <form action="/createusers" method="POST" className="space-y-4">
+            <form onSubmit={handleSignup} className="space-y-4">
               <div>
                 <label htmlFor="fullname" className="block">Fullname</label>
                 <input
@@ -62,6 +96,7 @@ const Signup = () => {
                   name="username"
                   className="w-full p-2 border rounded"
                   placeholder="Enter your username"
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   required
                 />
               </div>
