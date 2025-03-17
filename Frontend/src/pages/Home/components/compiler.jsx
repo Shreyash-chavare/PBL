@@ -58,7 +58,7 @@ const JDoodleCompiler = () => {
                     <div className="w-full lg:w-3/4 relative">
                         <label className="block text-left mb-2 text-lg font-medium">Code:</label>
                         <textarea
-                            className="block w-full h-64 p-4 border border-gray-300 rounded-lg resize-none text-lg"
+                            className="block w-full h-64 p-2 border border-gray-300 rounded-lg resize-none text-lg"
                             placeholder="Write your code here..."
                             value={code}
                             onChange={(e) => setCode(e.target.value)}

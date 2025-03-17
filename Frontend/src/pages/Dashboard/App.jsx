@@ -10,7 +10,9 @@ function Dashboard() {
       <div className='container'>
 
         <div className='room-members'> {/* contains members, room ID and leave button */}
-          <h1> Squad </h1>
+          <div className='squad-name'>
+            <h1> Squad </h1>
+          </div>
           <div>                       {/* TO DO: add status, make a function to display players */}
             <h2> Player 1 </h2>
             <h2> Player 2 </h2>
