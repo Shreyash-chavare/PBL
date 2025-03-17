@@ -2,10 +2,12 @@ import usermodel from '../models/usermodel.js'
 import tokenuser from '../utils/usertoken.js'
 import bcrypt from 'bcryptjs'
 const authuser=async(req,res)=>{
+
+    console.log(req.body);
     const fullname = req.body.fullname;
     const username = req.body.username;
     const password = req.body.password;
-    const Email = req.body.Email;
+    const Email = req.body.email;
 
     try{
 
@@ -21,7 +23,8 @@ const authuser=async(req,res)=>{
                 })
                 const token=tokenuser(usercreate);
                 res.cookie("user-token",token);
-                 res.redirect('/login');
+                console.log("User created successfully");
+                res.json({success:true,message:"User created successfully"});
             }
     else{
         return res.status(505).send(`User ${username} Already exist`);
