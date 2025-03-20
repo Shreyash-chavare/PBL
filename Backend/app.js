@@ -4,13 +4,19 @@ import userRouter from './Routes/userRouter.js'
 import path from 'path'
 import cookieparser from 'cookie-parser'
 import cors from "cors";
-const app=express();
 import { fileURLToPath } from 'url';
+import { createServer } from 'http';
 import mongodb from './config/mongoose-connection.js'
 import isLoggedIn from './middleware/isloggedin.js';
-const Mongo=mongodb
 import dotenv from 'dotenv';
+
+
+
+const app=express();
+const server = createServer(app);
+const Mongo=mongodb
 dotenv.config();
+
 
 app.set('view engine','ejs');
 app.use(express.json());
@@ -64,6 +70,7 @@ __dirname=path.dirname(fileURLToPath(import.meta.url))
     
 // })
 app.use('/',userRouter);
+
 app.post("/api/compile", async (req, res) => {
     const { script, language, stdin } = req.body;
     const clientId = process.env.JDOODLE_CLIENT_ID;
