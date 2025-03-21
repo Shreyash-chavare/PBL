@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import './App.css'
-import JDoodleCompiler from '../Home/components/compiler'
+import OnlineCompiler from '../Home/components/online_compiler'
 
 function Dashboard() {
 
@@ -26,7 +26,7 @@ function Dashboard() {
             
         </div>
         <div className='compiler-setup'> {/* TO DO: add compiler using api and style it */}
-          <JDoodleCompiler/>
+          <OnlineCompiler/>
         </div>
       </div>
     </>

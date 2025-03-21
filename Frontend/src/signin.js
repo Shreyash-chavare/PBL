@@ -18,6 +18,10 @@ export const onSignin = async (formData, navigate) => {
     try {
       const response = await fetch("http://localhost:3000/login", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         credentials: "include",
         body: JSON.stringify(formData),
         headers: { "Content-Type": "application/json" },

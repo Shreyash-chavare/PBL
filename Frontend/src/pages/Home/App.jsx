@@ -2,7 +2,7 @@ import { use, useContext, useState } from 'react';
 import './App.css';
 import Navbar from './components/Navbar';
 import Fat from './components/Fat';
-import JDoodleCompiler from './components/compiler';
+import JDoodleCompiler from './components/practice_compiler';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/login';
 import Signup from './components/signup';

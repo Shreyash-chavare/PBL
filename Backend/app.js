@@ -9,19 +9,35 @@ import { createServer } from 'http';
 import mongodb from './config/mongoose-connection.js'
 import isLoggedIn from './middleware/isloggedin.js';
 import dotenv from 'dotenv';
+import { Server } from "socket.io";
 
 
 
 const app=express();
 const server = createServer(app);
-const Mongo=mongodb
+const PORT = process.env.PORT || 3000;
+
 dotenv.config();
 
+const Mongo=mongodb
+Mongo.then(()=>{
+    console.log("mongodb connected")
+}).catch(err=>{
+    console.error("Mongodb connection error",err)
+})
 
-app.set('view engine','ejs');
+
+
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieparser());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Accept', 'Authorization']
+}));
+    
 
 app.use(session({
     secret: process.env.JWT_TOKEN,
@@ -30,51 +46,55 @@ app.use(session({
     cookie: { secure: false } 
 }))
 
-const __filename = fileURLToPath(import.meta.url); 
-let __dirname = path.dirname(__filename); 
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}));
-
-app.set('view engine','ejs');
-
-app.use(express.static(path.join(__dirname,'public')));
-// middleware to set user in response
-app.use((req, res, next) => {
-    if (req.session.user) {
-        res.locals.user = req.session.user;
-    }
-    next();
-});
 app.use('/',userRouter);
 
-
-
-
-__dirname=path.dirname(fileURLToPath(import.meta.url))
-
-
-// app.use(express.static(path.join(__dirname,'public')));
-
-
-
-
-// app.get('/',isLoggedIn,(req,res)=>{
-//     if(req.isAuthenticated){
-//         res.render('home');
-//     }
-//     else{
-//         res.redirect('/login');
-//     }  
+    const __filename = fileURLToPath(import.meta.url); 
+    let __dirname = path.dirname(__filename); 
     
-// })
-app.use('/',userRouter);
+    
+    app.use(express.static(path.join(__dirname,'public')));
 
-app.post("/api/compile", async (req, res) => {
-    const { script, language, stdin } = req.body;
-    const clientId = process.env.JDOODLE_CLIENT_ID;
-    const clientSecret = process.env.JDOODLE_CLIENT_SECRET;
+    const io = new Server(server, {
+        cors: {
+            origin: "http://localhost:5173",
+            methods: ["GET", "POST"],
+            credentials: true
+        }   
+    })
+
+    io.on('connection', (socket) => {
+            console.log('a user connected: ', socket.id);
+
+            socket.on("message", (data) => {
+                console.log(data);
+                io.emit("recieved-message", data);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('User disconnected:', socket.id);
+            });
+        });
+
+
+    app.use((req, res, next) => {
+        if (req.session.user) {
+            res.locals.user = req.session.user;
+        }
+        next();
+    });
+    
+    
+    
+    
+    __dirname=path.dirname(fileURLToPath(import.meta.url))
+    
+    
+    app.use('/',userRouter);
+    
+    app.post("/api/compile", async (req, res) => {
+        const { script, language, stdin } = req.body;
+        const clientId = process.env.JDOODLE_CLIENT_ID;
+        const clientSecret = process.env.JDOODLE_CLIENT_SECRET;
     const apiUrl = "https://api.jdoodle.com/v1/execute";
 
     const requestData = {
@@ -105,29 +125,19 @@ app.post("/api/compile", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch" });
     }
 });
-app.get('/',isLoggedIn,(req,res)=>{
-    if(req.isAuthenticated){
-        res.render('home');
-    }
-    else{
-        res.redirect('/login');
-    }  
+// app.get('/',isLoggedIn,(req,res)=>{
+//     if(req.isAuthenticated){
+//         res.render('home');
+//     }
+//     else{
+//         res.redirect('/login');
+//     }  
     
-})
+// })
 
 
-Mongo.then(()=>{
-    console.log("mongodb connected")
-}).catch(err=>{
-    console.error("Mongodb connection error",err)
-})
 
 
-app.listen(3000);//Renders the react home page immediately after website loads
-// const parentDir = path.join(__dirname, "..")
-// const reactPath = path.join(parentDir, "Frontend", "dist");
-// app.use(express.static(reactPath));
-
-// app.get("*", (req, res) => {
-//     res.sendFile(path.join(reactPath, "index.html"));
-// });
+server.listen(PORT, ()=>{
+    console.log("Server running on port 3000")
+});
