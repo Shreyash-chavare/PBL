@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/login';
 import Signup from './components/signup';
 import Dashboard from '../Dashboard/App';
+import Profile from '../Dashboard/profile';
 // import isLoggedIn from '../../../../Backend/middleware/isloggedin';  
 // import { AuthProvider } from '../../authprov';
 // import { AuthContext } from '../../authprov';
@@ -31,6 +32,7 @@ import Dashboard from '../Dashboard/App';
           <Route path="/api/login" element={<Login/>} />  
           <Route path="/api/signup" element={<Signup />} />  
           <Route path="/app" element={<Dashboard/>} />
+          <Route path="/profile" element={<Profile/>} />
           
         </Routes>
       </div>
