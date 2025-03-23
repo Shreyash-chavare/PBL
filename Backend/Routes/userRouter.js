@@ -5,6 +5,7 @@ import isLoggedIn from '../middleware/isloggedin.js';
 import logoutuser from '../controllers/logout.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import airoute from '../controllers/ai.service.js'
 import user from '../models/usermodel.js';
 import userModel from '../models/usermodel.js';
 
@@ -52,6 +53,12 @@ router.get("/test",(req,res)=>{
 //             res.status(404).send('User not found');
 //         }
 // })
+router.post('/get-code',async(req,res)=>{
+    const {code}=req.body;
+    if(!code) return res.status(404).send("Code is required!");
+    const response=await airoute(code);
+    res.send(response);
+})
 
 router.post('/createusers',authuser);
 router.post('/login',userlog);
