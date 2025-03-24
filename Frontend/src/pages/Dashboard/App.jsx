@@ -7,7 +7,7 @@ function Dashboard() {
     const [reviewData, setReviewData] = useState(""); // State to hold review data
 
     
-    
+
     return (
         <>
             <div className='container w-1'>
@@ -15,10 +15,13 @@ function Dashboard() {
                     <div className='squad-name'>
                         <h1> Squad </h1>
                     </div>
-                    <div> {/* TO DO: add status, make a function to display players */}
-                        <h2> Player 1 </h2>
-                        <h2> Player 2 </h2>
-                        <h2> Player 3 </h2>
+                    <div className='player-box'> {/* TO DO: add status, make a function to display players */}
+                        <div className='player-details'>
+                            <div className='player'>
+                                <h2>Player</h2>
+                            </div>
+                        </div>
+ 
                     </div>
 
                     <div className='room-detail'> {/* contains room ID and leave button */}
