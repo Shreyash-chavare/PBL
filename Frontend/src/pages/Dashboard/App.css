@@ -78,3 +78,9 @@ h2{
 .squad-name {
   margin-bottom: 25px;
 }
+
+@media (min-width: 1280px) {
+  .container{
+    max-width: 100%;
+  }
+}

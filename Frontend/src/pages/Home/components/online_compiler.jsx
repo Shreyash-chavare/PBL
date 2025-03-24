@@ -140,7 +140,9 @@ const OnlineCompiler = ({setParentReview}) => {
                             Run Code
                         </button>
                     </div>
+                    
                 </div>
+                
     
                 <div className="flex flex-col lg:flex-row gap-6 mb-6">
                     <div className="w-full lg:w-1/2 mt-4">

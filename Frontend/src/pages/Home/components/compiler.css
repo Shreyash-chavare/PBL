@@ -11,6 +11,7 @@ html, body {
     background-color: black;
     align-items: center;
     align-content: center;
+    max-width: 100%;
     
 }
 
