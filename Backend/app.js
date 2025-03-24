@@ -58,22 +58,35 @@ app.use('/',userRouter);
         cors: {
             origin: "http://localhost:5173",
             methods: ["GET", "POST"],
-            credentials: true
-        }   
+            credentials: true,
+            transports: ['websocket']
+        },
+        pingTimeout: 60000,
+        pingInterval: 25000
     })
 
     io.on('connection', (socket) => {
-            console.log('a user connected: ', socket.id);
+        console.log('User connected:', socket.id);
 
-            socket.on("message", (data) => {
-                console.log(data);
-                io.emit("recieved-message", data);
-            });
+        // Store socket ID in a Set to track active connections
+        const activeConnections = new Set();
+        activeConnections.add(socket.id);
 
-            socket.on('disconnect', () => {
-                console.log('User disconnected:', socket.id);
-            });
+        socket.on("message", (data) => {
+            console.log(`Message from ${socket.id}:`, data);
+            io.emit("message", data);
         });
+
+        socket.on('disconnect', (reason) => {
+            console.log(`User disconnected (${reason}):`, socket.id);
+            activeConnections.delete(socket.id);
+        });
+
+        // Handle errors
+        socket.on('error', (error) => {
+            console.error('Socket error:', error);
+        });
+    });
 
 
     app.use((req, res, next) => {

@@ -1,5 +1,5 @@
 import React, { useState , useEffect, useRef} from "react";
-import './index.css'; // Ensure you have this import to apply Tailwind CSS
+import './index.css'; 
 import './compiler.css';
 import {io} from 'socket.io-client';
 import axios from 'axios';
@@ -11,44 +11,51 @@ const OnlineCompiler = ({setParentReview}) => {
     const [code, setCode] = useState("");
     const [input, setInput] = useState("");
     const [output, setOutput] = useState("");
-    const [review,setReview]=useState("");
+    const [review, setReview] = useState("");
+    const [socketId, setSocketId] = useState("");
     const socketRef = useRef(null);
 
-    const socket = io("http://localhost:3000");
     useEffect(() => {
         prism.highlightAll();
-      }, []);
+    }, []);
 
     useEffect(() => {
-        socketRef.current = io("http://localhost:3000", {
-            withCredentials: true,
-            transports: ['websocket'],
-            timeout: 10000,
-        });
-        
+        // Only create socket connection if it doesn't exist
+        if (!socketRef.current) {
+            socketRef.current = io("http://localhost:3000", {
+                withCredentials: true,
+                transports: ['websocket'],
+                timeout: 10000,
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                reconnectionAttempts: 5
+            });
 
-        // Socket event handlers
-        socketRef.current.on("connect", () => {
-            console.log("Connected to server:", socketRef.current.id);
-        });
+            // Socket event handlers
+            socketRef.current.on("connect", () => {
+                console.log("Connected to server:", socketRef.current.id);
+                setSocketId(socketRef.current.id);
+            });
 
-        socketRef.current.on("connect_error", (error) => {
-            console.error("Socket connection error:", error);
-        });
+            socketRef.current.on("connect_error", (error) => {
+                console.error("Socket connection error:", error);
+            });
 
-        socketRef.current.on("recieved-message", (data) => {
-            setCode(data);
-        });
+            socketRef.current.on("message", (data) => {
+                setCode(data);
+            });
+        }
 
-        // Cleanup on unmount
+        // Cleanup function
         return () => {
-            if (socketRef.current) {
+            if (socketRef.current && socketRef.current.connected) {
+                console.log("Cleaning up socket connection");
                 socketRef.current.disconnect();
+                socketRef.current = null;
             }
         };
-    }, []);
-    
-
+    }, []); // Empty dependency array
 
     const handleRunCode = async () => {
         setOutput("Running...");
@@ -80,7 +87,7 @@ const OnlineCompiler = ({setParentReview}) => {
 
     const handleTextArea = (e) => {
         setCode(e.target.value);
-        socket.emit("message", e.target.value);
+        socketRef.current.emit("message", e.target.value);
     };
     const runcode = async () => {
         try {
@@ -95,7 +102,7 @@ const OnlineCompiler = ({setParentReview}) => {
       return (
         <div className="flex flex-col items-center h-fill bg-gray-100 p-4">
             <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
-                <h1 className="text-4xl font-bold mb-6 text-center">JDoodle Compiler</h1>
+                <h1 className="text-4xl font-bold mb-6 text-center">JDoodleCompiler</h1>
     
                 <div className="flex flex-col lg:flex-row gap-6 mb-6">
                     <div className="w-full lg:w-1/4">
