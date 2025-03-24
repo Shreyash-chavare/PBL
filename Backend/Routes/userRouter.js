@@ -8,6 +8,7 @@ import path from 'path';
 import airoute from '../controllers/ai.service.js'
 import user from '../models/usermodel.js';
 import userModel from '../models/usermodel.js';
+import { authcheck } from '../controllers/authcheck.js';
 
 const router=express.Router();
 router.get('/signup',(req,res)=>{ 
@@ -21,14 +22,14 @@ let __dirname = path.dirname(__filename);
 
 
 
-router.get('/api/check',isLoggedIn);
-router.get('/page',(req,res)=>{
-    res.render('front');
-})
+router.get('/api/check',isLoggedIn,authcheck);
+// router.get('/page',(req,res)=>{
+//     res.render('front');
+// })
 
-router.get('/api/login',(req,res)=>{
-    res.render('login')
-})
+// router.get('/api/login',(req,res)=>{
+//     res.render('login')
+// })
 
 // const dashpath = path.join(reactPath, "public")
 router.get('/home',isLoggedIn,(req,res)=>{

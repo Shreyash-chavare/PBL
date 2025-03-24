@@ -5,33 +5,63 @@ import bcrypt from 'bcryptjs';
 const userlog = async (req, res) => {
     try {
         let { email, password } = req.body;
-        console.log(req.body)
-        let Email = email 
 
-        const IsUser = await userModel.findOne({ Email });
+        const IsUser = await userModel.findOne({ Email: email });
 
         if (!IsUser) {
-            return res.status(404).json({ error: "User not found" });
+            return res.status(400).json({ 
+                success: false,
+                message: "User not found" 
+            });
         }
         
-        if (IsUser) {
-            const userauthenticate = await bcrypt.compare(password, IsUser.password);
-            if (userauthenticate) {
-                const token = tokenuser(IsUser); 
-                res.cookie("user-token", token);
-                req.session.user = IsUser;
-                console.log("Login successfully");
-                res.json({ success: true, message: "Login successful" });
+        const userauthenticate = await bcrypt.compare(password, IsUser.password);
+        if (userauthenticate) {
+            const token = tokenuser(IsUser);
+            res.cookie("user-token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                maxAge: 24 * 60 * 60 * 1000 // 24 hours
+            });
+            
+            // Set session
+            req.session.user = {
+                id: IsUser._id,
+                email: IsUser.Email,
+                name: IsUser.name
+            };
+            
+            // Save session explicitly
+            await new Promise((resolve, reject) => {
+                req.session.save((err) => {
+                    if (err) reject(err);
+                    else resolve();
+                });
+            });
 
-            } else {
-                return res.status(401).json("Something went wrong IsUser is false");
-            }
+            console.log("Login successfully");
+            res.json({ 
+                success: true, 
+                message: "Login successful",
+                user: {
+                    id: IsUser._id,
+                    email: IsUser.Email,
+                    name: IsUser.name
+                }
+            });
         } else {
-            return res.status(404).json("User not found");
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials"
+            });
         }
     } catch (error) {
         console.error("Error during login:", error);
-        return res.status(500).json("Something went wrong");
+        return res.status(500).json({
+            success: false,
+            message: "Something went wrong"
+        });
     }
 };
 

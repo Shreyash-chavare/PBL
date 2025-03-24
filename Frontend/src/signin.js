@@ -1,20 +1,9 @@
-// import { useNavigate } from "react-router-dom";
-// export const onSignin = async (setIsLoggedIn) => {
-//     try {
-//         const res = await fetch("http://localhost:3000/login", { credentials: "include" });
-//         const data = await res.json();
-//         setIsLoggedIn(data.loggedin); // Updates React state
-//         console.log(data.loggedin)
-//     } catch (error) {
-//       setIsLoggedIn(false);
-//     }
-//   };
-// export const onSignin = (setIsLoggedIn) =>{
-//     fetch("http://localhost:3000/test")
-// }
+import { useNavigate } from "react-router-dom";
+import { useAuthstore } from "./stores/auth";
+import toast from 'react-hot-toast';
 
 export const onSignin = async (formData, navigate) => {
-    // const navigate = useNavigate();
+    const { login } = useAuthstore.getState();
     try {
       const response = await fetch("http://localhost:3000/login", {
         method: "POST",
@@ -24,19 +13,24 @@ export const onSignin = async (formData, navigate) => {
         },
         credentials: "include",
         body: JSON.stringify(formData),
-        headers: { "Content-Type": "application/json" },
       });
   
       const data = await response.json();
   
       if (data.success) {
-        
-        navigate('/app');  // ✅ Redirect user in React
+        // Update auth store with user data
+        await login(data.user);
+        toast.success("Login successful");
+        // Navigate to home page after successful login
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 1000);
       } else {
-        alert("Login failed");
+        toast.error(data.message || "Login failed");
       }
     } catch (error) {
       console.error("Error during login:", error);
+      toast.error("Login failed");
     }
-  };
+};
   

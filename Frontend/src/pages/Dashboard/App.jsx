@@ -32,20 +32,6 @@ function Dashboard() {
                 <div className='compiler-setup'> {/* Compiler */}
                     <OnlineCompiler setParentReview={setReviewData} />
                 </div>
-                <div className='review-display'> {/* Display review outside OnlineCompiler */}
-                {reviewData && (
-        <div className="review-display"> {/* Adding review without disrupting others */}
-            <div className="review-container bg-blue-100 p-4 rounded shadow-lg">
-                <h2 className="text-lg font-bold">Code Review:</h2>
-                <pre className="bg-gray-200 p-4 rounded text-black overflow-auto">
-                    {reviewData}
-                </pre>
-            </div>
-        </div>
-    )}
-
-
-                </div>
             </div>
         </>
     );

@@ -1,26 +1,43 @@
-import React, { useState , useEffect, useRef} from "react";
-import './index.css'; 
+import React, { useState, useEffect, useRef } from "react";
+import './index.css';
 import './compiler.css';
-import {io} from 'socket.io-client';
+import { io } from 'socket.io-client';
 import axios from 'axios';
 import 'prismjs/themes/prism-tomorrow.css';
 import prism from 'prismjs';
+import { Play, Save, Download, Settings, RefreshCw, X } from 'lucide-react';
 
-const OnlineCompiler = ({setParentReview}) => {
-    const [language, setLanguage] = useState("python3");
-    const [code, setCode] = useState("");
-    const [input, setInput] = useState("");
+const OnlineCompiler = ({ setParentReview }) => {
+    const [language, setLanguage] = useState(() => localStorage.getItem('compiler_language') || "python3");
+    const [code, setCode] = useState(() => localStorage.getItem('compiler_code') || "");
+    const [input, setInput] = useState(() => localStorage.getItem('compiler_input') || "");
     const [output, setOutput] = useState("");
     const [review, setReview] = useState("");
     const [socketId, setSocketId] = useState("");
+    const [isRunning, setIsRunning] = useState(false);
+    const [showReview, setShowReview] = useState(false);
     const socketRef = useRef(null);
+
+    // Save code to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('compiler_code', code);
+    }, [code]);
+
+    // Save language to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('compiler_language', language);
+    }, [language]);
+
+    // Save input to localStorage whenever it changes
+    useEffect(() => {
+        localStorage.setItem('compiler_input', input);
+    }, [input]);
 
     useEffect(() => {
         prism.highlightAll();
     }, []);
 
     useEffect(() => {
-        // Only create socket connection if it doesn't exist
         if (!socketRef.current) {
             socketRef.current = io("http://localhost:3000", {
                 withCredentials: true,
@@ -32,7 +49,6 @@ const OnlineCompiler = ({setParentReview}) => {
                 reconnectionAttempts: 5
             });
 
-            // Socket event handlers
             socketRef.current.on("connect", () => {
                 console.log("Connected to server:", socketRef.current.id);
                 setSocketId(socketRef.current.id);
@@ -47,7 +63,6 @@ const OnlineCompiler = ({setParentReview}) => {
             });
         }
 
-        // Cleanup function
         return () => {
             if (socketRef.current && socketRef.current.connected) {
                 console.log("Cleaning up socket connection");
@@ -55,9 +70,10 @@ const OnlineCompiler = ({setParentReview}) => {
                 socketRef.current = null;
             }
         };
-    }, []); // Empty dependency array
+    }, []);
 
     const handleRunCode = async () => {
+        setIsRunning(true);
         setOutput("Running...");
 
         const requestData = {
@@ -82,6 +98,8 @@ const OnlineCompiler = ({setParentReview}) => {
             setOutput(result.output || result.error);
         } catch (error) {
             setOutput("Error: " + error.message);
+        } finally {
+            setIsRunning(false);
         }
     };
 
@@ -89,84 +107,104 @@ const OnlineCompiler = ({setParentReview}) => {
         setCode(e.target.value);
         socketRef.current.emit("message", e.target.value);
     };
+
     const runcode = async () => {
         try {
-          const response = await axios.post('http://localhost:3000/get-code', { code });
-          setReview(response.data);
-          setParentReview(response.data);
+            setReview("");
+            setShowReview(false);
+            
+            const response = await axios.post('http://localhost:3000/get-code', { code });
+            setReview(response.data);
+            setParentReview(response.data);
+            setShowReview(true);
         } catch (error) {
-          console.error('Error running code:', error);
+            console.error('Error running code:', error);
         }
-      };
+    };
 
-      return (
-        <div className="flex flex-col items-center h-fill bg-gray-100 p-4">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
-                <h1 className="text-4xl font-bold mb-6 text-center">JDoodleCompiler</h1>
-    
-                <div className="flex flex-col lg:flex-row gap-6 mb-6">
-                    <div className="w-full lg:w-1/4">
-                        <label className="block text-left mb-2 text-lg font-medium">Language:</label>
-                        <select
-                            className="block w-full p-3 border border-gray-300 rounded-lg text-lg"
-                            value={language}
-                            onChange={(e) => setLanguage(e.target.value)}
-                        >
-                            <option value="python3">Python</option>
-                            <option value="java">Java</option>
-                            <option value="c">C</option>
-                            <option value="cpp">C++</option>
-                        </select>
-                    </div>
+    return (
+        <div className={`compiler-container ${showReview ? 'review-open' : ''}`}>
+            <div className="compiler-header">
+                <div className="language-selector">
+                    <select
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
+                        className="language-select"
+                    >
+                        <option value="python3">Python</option>
+                        <option value="java">Java</option>
+                        <option value="c">C</option>
+                        <option value="cpp">C++</option>
+                    </select>
                 </div>
-    
-                <div className="relative w-full lg:flex lg:gap-6">
-                    {/* Move Review Code button above code body */}
-                    <div className="absolute top-[-50px] lg:relative lg:top-auto lg:mt-0 self-start mb-4">
-                        <button
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
-                            onClick={runcode}
-                        >
-                            Review Code
-                        </button>
-                    </div>
-    
-                    {/* Code and Input */}
-                    <div className="w-full lg:w-3/4">
-                        <label className="block text-left mb-2 text-lg font-medium">Code:</label>
-                        <textarea
-                            className="block w-full h-64 p-2 border border-gray-300 rounded-lg resize-none text-lg"
-                            placeholder="Write your code here..."
-                            value={code}
-                            onChange={handleTextArea}
-                        ></textarea>
-                        <button
-                            onClick={handleRunCode}
-                            className="run-button mt-2 rounded-lg font-semibold text-md"
-                        >
-                            Run Code
-                        </button>
-                    </div>
-                    
+                <div className="compiler-controls">
+                    <button className="control-btn" onClick={handleRunCode} disabled={isRunning}>
+                        <Play className="icon" />
+                        {isRunning ? 'Running...' : 'Run'}
+                    </button>
+                    <button className="control-btn" onClick={runcode}>
+                        <RefreshCw className="icon" />
+                        Review
+                    </button>
+                    <button className="control-btn">
+                        <Save className="icon" />
+                        Save
+                    </button>
+                    <button className="control-btn">
+                        <Download className="icon" />
+                        Download
+                    </button>
+                    <button className="control-btn">
+                        <Settings className="icon" />
+                        Settings
+                    </button>
                 </div>
-                
-    
-                <div className="flex flex-col lg:flex-row gap-6 mb-6">
-                    <div className="w-full lg:w-1/2 mt-4">
-                        <label className="block text-left mb-2 text-lg font-medium">Input (Optional):</label>
+            </div>
+
+            <div className="compiler-body">
+                <div className="editor-pane">
+                    <div className="editor-header">
+                        <span className="file-name">main.{language === 'python3' ? 'py' : language === 'java' ? 'java' : language === 'c' ? 'c' : 'cpp'}</span>
+                    </div>
+                    <textarea
+                        className="code-editor"
+                        placeholder="Write your code here..."
+                        value={code}
+                        onChange={handleTextArea}
+                        spellCheck="false"
+                    />
+                </div>
+
+                <div className="io-pane">
+                    <div className="input-section">
+                        <div className="section-header">Input</div>
                         <textarea
-                            className="block w-full h-24 p-4 border border-gray-300 rounded-lg resize-none text-lg"
-                            placeholder="Input (Optional)"
+                            className="io-textarea"
+                            placeholder="Enter input (optional)"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                        ></textarea>
+                        />
                     </div>
-                    <div className="w-full lg:w-1/2 mt-4">
-                        <label className="block text-left mb-2 text-lg font-medium">Output:</label>
-                        <pre className="bg-gray-200 p-4 text-red-600 rounded-lg text-lg h-24 overflow-x-auto">{output}</pre>
+                    <div className="output-section">
+                        <div className="section-header">Output</div>
+                        <pre className="output-display">{output}</pre>
                     </div>
                 </div>
             </div>
+
+            {showReview && (
+                <div className="review-panel">
+                    <div className="review-header">
+                        <h3>Code Review</h3>
+                        <button className="close-btn" onClick={() => setShowReview(false)}>
+                            <X className="icon" />
+                        </button>
+                    </div>
+                    <div className="review-content">
+                        {review}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

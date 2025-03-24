@@ -1,21 +1,21 @@
-import React, { useContext, useState } from 'react';
-import { useAuthstore } from '../../../stores/auth';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './index.css'; 
-import { onSignin } from '../../../signin';
-import { useNavigate } from 'react-router-dom';
-// import { AuthContext } from '../../../authprov';
-
+import { Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { useAuthstore } from '../../../stores/auth';
+import { axiosinstance } from '../../../utils/axios';
 
 
 const Login = () => {
-  // const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
-  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: ""
   });
-  const { login,isLoggingIn } = useAuthstore();
+  const [isLoading, setIsLoading] = useState(false);
+  const { isLoggingIn, login } = useAuthstore();
+  const navigate = useNavigate();
+
   const validateForm = () => {
     if(!formData.email.trim()) return toast.error("Email is required");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -25,29 +25,34 @@ const Login = () => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const success=validateForm();
-    if(success===true){
-      login(formData);
+    if (validateForm()) {
+      setIsLoading(true);
+      try {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        const res = await axiosinstance.post('/login', formData);
+        if (res.data.success) {
+          await login(res.data.user);
+          toast.success('Login successful');
+          window.location.href = '/';
+        } else {
+          toast.error(res.data.message || 'Login failed');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        toast.error(error.response?.data?.message || 'Login failed');
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
-
-  const navigate = useNavigate();
-
-
-
 
   return (
     <div className="flex items-center justify-center h-screen bg-gradient-to-r from-blue-900 to-blue-400">
       <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
         <h2 className="text-3xl font-bold text-center mb-6">Login to your account</h2>
-        <form onSubmit={async (e) => {
-    e.preventDefault();  // ✅ Prevent form from submitting traditionally
-
-    // Call your login function
-    await onSignin(formData, navigate);
-  }} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
@@ -58,6 +63,7 @@ const Login = () => {
               placeholder="Enter your email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              disabled={isLoading}
             />
           </div>
           <div>
@@ -70,26 +76,27 @@ const Login = () => {
               placeholder="Enter your password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              disabled={isLoading}
             />
           </div>
-          <a href="/forgot" className="block text-right text-sm text-blue-600 hover:underline">Forgot?</a>
+          <a href="/forgot" className="block text-right text-sm text-blue-600 hover:underline" style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>Forgot?</a>
           <button
-              type="submit"
-              className='btn btn-primary w-full'
-              disabled={isLoggingIn}
-            >
-              {isLoggingIn ? (
-                <>
-                  <Loader2 className='size-5 animate-spin' />
-                  Loading...
-                </>
-              ) : (
-                "Sign in"
-              )}
-            </button>
+            type="submit"
+            className='btn btn-primary w-full'
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <Loader2 className='size-5 animate-spin' />
+                <span>Loading...</span>
+              </div>
+            ) : (
+              "Sign in"
+            )}
+          </button>
         </form>
         <div className="text-center mt-6">
-          <p className="text-sm">Don&apos;t have an account?{" "} <Link to="/api/signup" className='link link-primary'>Create Account</Link></p>
+          <p className="text-sm">Don&apos;t have an account?{" "} <Link to="/api/signup" className='link link-primary' style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>Create Account</Link></p>
         </div>
       </div>
     </div>
