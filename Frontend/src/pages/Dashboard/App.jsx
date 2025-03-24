@@ -8,7 +8,7 @@ function Dashboard() {
 
     return (
         <>
-            <div className='container'>
+            <div className='container w-1'>
                 <div className='room-members'> {/* contains members, room ID and leave button */}
                     <div className='squad-name'>
                         <h1> Squad </h1>
