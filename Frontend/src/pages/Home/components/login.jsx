@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './index.css'; 
 import { Loader2 } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useAuthstore } from '../../../stores/auth';
 import { axiosinstance } from '../../../utils/axios';
 
@@ -34,8 +34,15 @@ const Login = () => {
         const res = await axiosinstance.post('/login', formData);
         if (res.data.success) {
           await login(res.data.user);
-          toast.success('Login successful');
-          window.location.href = '/';
+          toast.success('Login successful', {
+            duration: 2000,
+            position: 'top-center',
+            style: {
+              background: '#22c55e',
+              color: 'white',
+            }
+          });
+          navigate('/');
         } else {
           toast.error(res.data.message || 'Login failed');
         }
@@ -79,7 +86,16 @@ const Login = () => {
               disabled={isLoading}
             />
           </div>
-          <a href="/forgot" className="block text-right text-sm text-blue-600 hover:underline" style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>Forgot?</a>
+          <div className="flex items-center justify-between">
+            <div className="text-sm">
+              <Link
+                to="/forgot-password"
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          </div>
           <button
             type="submit"
             className='btn btn-primary w-full'

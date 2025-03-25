@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import { axiosinstance } from '../utils/axios';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 const BASE_URL=import.meta.env.MODE==="development"?"http://localhost:3000/":"/"
 
@@ -58,25 +58,44 @@ export const useAuthstore = create((set,get) => ({
         const res = await axiosinstance.get("/logout");
         console.log("Logout response:", res.data);
         
-        // Clear auth state regardless of response
-        set({ authUser: null });
-        
         if (res.data.success) {
-          toast.success("Logged out successfully");
-          // Force reload to clear any cached state
-          window.location.href = '/login';
+          toast.success('Successfully logged out', {
+            duration: 2000,
+            position: 'top-center',
+            style: {
+              background: '#22c55e',
+              color: 'white',
+            }
+          });
+          // Don't set authUser to null immediately
+          setTimeout(() => {
+            set({ authUser: null });
+          });
           return { success: true };
         } else {
-          toast.error("Logout failed");
+          toast.error('Logout failed', {
+            position: 'top-center',
+            style: {
+              background: '#ef4444',
+              color: 'white',
+            }
+          });
           return { success: false, message: res.data.message || "Logout failed" };
         }
       } catch (error) {
         console.error('Logout error:', error);
-        // Clear auth state even if request fails
         set({ authUser: null });
-        toast.error("Logout failed");
-        // Force reload to clear any cached state
-        window.location.href = '/login';
+        toast.error('Logout failed', {
+          duration: 2000,
+          position: 'top-center',
+          style: {
+            background: '#ef4444',
+            color: 'white',
+          }
+        });
+        setTimeout(() => {
+          window.location.href = '/login';
+        }, 1000);
         return { success: false, message: error.response?.data?.message || "Logout failed" };
       }
     },

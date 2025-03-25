@@ -29,7 +29,7 @@ const userlog = async (req, res) => {
             req.session.user = {
                 id: IsUser._id,
                 email: IsUser.Email,
-                name: IsUser.name
+                name: IsUser.username
             };
             
             // Save session explicitly

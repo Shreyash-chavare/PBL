@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Calendar, Settings, User, Mail, Plus, LogIn, Code } from 'lucide-react';
+import { Calendar, User, Mail, Plus, LogIn, Code } from 'lucide-react';
+import { useAuthstore } from '../../stores/auth';
 
 const Profile = () => {
   const [roomId, setRoomId] = useState('');
   const [newRoomName, setNewRoomName] = useState('');
+  const {authUser}= useAuthstore();
+  
+  console.log('AuthUser in Profile:', authUser); // Debug log
   
   // Sample user data
   const userData = {
-    username: 'JaneDoe',
-    email: 'jane.doe@example.com',
+    username: authUser?.name || 'Not Available',
+    email: authUser?.email || 'Not Available',
     profileImage: '/api/placeholder/150/150',
     // Sample activity data (representing a year of activity)
     activityData: generateSampleActivityData()
@@ -69,9 +73,6 @@ const Profile = () => {
       <div className="w-64 bg-gray-800 text-white p-4">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-xl font-bold">My Profile</h1>
-          <button className="p-2 rounded-full hover:bg-gray-700" title="Settings">
-            <Settings size={20} />
-          </button>
         </div>
         
         <div className="space-y-6">
@@ -150,13 +151,13 @@ const Profile = () => {
               {/* Email */}
               <div className="flex items-center text-gray-500 text-sm mb-1">
                 <Mail size={14} className="mr-1" />
-                <span>{userData.email}</span>
+                <span>{userData?.email || 'Not Available'}</span>
               </div>
               
               {/* Username */}
               <div className="flex items-center text-2xl font-bold">
                 <User size={24} className="mr-2 text-gray-700" />
-                <h2>{userData.username}</h2>
+                <h2>{userData?.username || 'Not Available'}</h2>
               </div>
               
               <div className="mt-4 text-gray-600">
