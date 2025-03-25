@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import './index.css';
 import './compiler.css';
 import { io } from 'socket.io-client';
@@ -7,7 +7,7 @@ import 'prismjs/themes/prism-tomorrow.css';
 import prism from 'prismjs';
 import { Play, Save, Download, Settings, RefreshCw, X } from 'lucide-react';
 
-const OnlineCompiler = ({ setParentReview }) => {
+const OnlineCompiler = ({ setParentReview , room }) => {
     const [language, setLanguage] = useState(() => localStorage.getItem('compiler_language') || "python3");
     const [code, setCode] = useState(() => localStorage.getItem('compiler_code') || "");
     const [input, setInput] = useState(() => localStorage.getItem('compiler_input') || "");
@@ -17,6 +17,7 @@ const OnlineCompiler = ({ setParentReview }) => {
     const [isRunning, setIsRunning] = useState(false);
     const [showReview, setShowReview] = useState(false);
     const socketRef = useRef(null);
+    const [flag, setFlag] = useState(false);
 
     // Save code to localStorage whenever it changes
     useEffect(() => {
@@ -38,6 +39,18 @@ const OnlineCompiler = ({ setParentReview }) => {
     }, []);
 
     useEffect(() => {
+        if (room) {
+            handleJoinRoom();
+        }
+    }, [room]);
+
+    const handleJoinRoom = () => {
+        socketRef.current.emit("join-room", room);
+        setFlag(true);
+    };
+
+    useEffect(() => {
+
         if (!socketRef.current) {
             socketRef.current = io("http://localhost:3000", {
                 withCredentials: true,

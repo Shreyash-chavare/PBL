@@ -89,6 +89,10 @@ app.use('/',userRouter);
             activeConnections.delete(socket.id);
         });
 
+        socket.on("join-room", (room) => {
+            socket.join(room);
+        });
+
         // Handle errors
         socket.on('error', (error) => {
             console.error('Socket error:', error);

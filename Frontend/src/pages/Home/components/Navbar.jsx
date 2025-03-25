@@ -14,18 +14,18 @@ const Navbar = () => {
             const result = await logout();
             if (result.success) {
                 setIsSettingsOpen(false);
-                navigate('/login');
+                navigate('/');
                 useAuthstore.setState({ authUser: null });
             }
         } catch (error) {
             console.error("Logout failed:", error);
             setIsSettingsOpen(false);
-            navigate('/login');
+            navigate('/');
         }
     };
 
     // Only show settings on home page
-    const showSettings = location.pathname === '/';
+    const showSettings = location.pathname === '/app';
 
     return (
         <nav className='sticky top-0 z-50 w-full bg-white shadow-sm'>
@@ -117,7 +117,7 @@ const Navbar = () => {
                                     </Link>
                                 </li>
                                 <li className="group/item hover:bg-blue-50 transition-colors">
-                                    <Link to="/api/login" className="px-3 py-2 flex items-center gap-2 w-full">
+                                    <Link to="/login" className="px-3 py-2 flex items-center gap-2 w-full">
                                         <span className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-purple-600">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                                                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>

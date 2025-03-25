@@ -36,8 +36,8 @@ function App() {
     <div className={`${isAppRoute ? 'h-screen' : 'min-h-screen'} bg-gray-100`}>
       <Navbar />
       <Routes>
-        <Route path="/" element={authUser ? <Fat /> : <Navigate to="/login"/>} />
-        <Route path="/practice" element={authUser ? <JDoodleCompiler /> : <Navigate to="/login"/>} />
+        <Route path="/" element={<Fat />} />
+        <Route path="/practice" element={<JDoodleCompiler />} />
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/"/>} />  
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/"/>} />  
         <Route path="/app" element={authUser ? <Dashboard /> : <Navigate to="/login"/>} />
