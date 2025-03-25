@@ -52,7 +52,7 @@ const Signup = () => {
         
         if (data.success) {
           toast.success("Account created successfully!");
-          navigate('/api/login');
+          navigate('/login');
         } else {
           toast.error(data.message || "Failed to create account");
         }
@@ -148,7 +148,7 @@ const Signup = () => {
             <div className="text-center mt-4">
               <p>
                 Already have an account?{" "}
-                <Link to="/api/login" className='link link-primary'>Sign in</Link>
+                <Link to="/login" className='link link-primary'>Sign in</Link>
               </p>
             </div>
           </div>

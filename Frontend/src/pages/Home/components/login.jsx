@@ -96,7 +96,7 @@ const Login = () => {
           </button>
         </form>
         <div className="text-center mt-6">
-          <p className="text-sm">Don&apos;t have an account?{" "} <Link to="/api/signup" className='link link-primary' style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>Create Account</Link></p>
+          <p className="text-sm">Don&apos;t have an account?{" "} <Link to="/signup" className='link link-primary' style={{ pointerEvents: isLoading ? 'none' : 'auto' }}>Create Account</Link></p>
         </div>
       </div>
     </div>
