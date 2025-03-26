@@ -7,7 +7,7 @@ import 'prismjs/themes/prism-tomorrow.css';
 import prism from 'prismjs';
 import { Play, Save, Download, Settings, RefreshCw, X } from 'lucide-react';
 
-const OnlineCompiler = ({ setParentReview , room }) => {
+const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
     const [language, setLanguage] = useState(() => localStorage.getItem('compiler_language') || "python3");
     const [code, setCode] = useState(() => localStorage.getItem('compiler_code') || "");
     const [input, setInput] = useState(() => localStorage.getItem('compiler_input') || "");
@@ -17,7 +17,6 @@ const OnlineCompiler = ({ setParentReview , room }) => {
     const [isRunning, setIsRunning] = useState(false);
     const [showReview, setShowReview] = useState(false);
     const socketRef = useRef(null);
-    const [flag, setFlag] = useState(false);
 
     // Save code to localStorage whenever it changes
     useEffect(() => {

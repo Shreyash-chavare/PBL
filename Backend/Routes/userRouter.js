@@ -32,6 +32,22 @@ router.get('/api/check',isLoggedIn,authcheck);
 // })
 
 // const dashpath = path.join(reactPath, "public")
+
+router.get('/getUsername',isLoggedIn, (req, res) => {
+    try {
+        console.log("req",req.user.username)
+        const username = req.user?.username || 'Anonymous';
+        res.json({ 
+            success: true, 
+            username: username 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: "Failed to get username" 
+        });
+    }});
+
 router.get('/home',isLoggedIn,(req,res)=>{
     if(req.session.user){
         console.log('worked')
