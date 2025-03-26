@@ -1,8 +1,9 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 import { LogIn } from 'lucide-react';
 import OnlineCompiler from '../Home/components/online_compiler';
+import { io } from 'socket.io-client';
 
 function Dashboard() {
     const [reviewData, setReviewData] = useState(""); // State to hold review data
@@ -11,6 +12,14 @@ function Dashboard() {
     const [flag, setFlag] = useState(false)
     const [roomMembers, setRoomMembers] = useState([]); // State to hold room members
     const [username, setUsername] = useState("");
+    const socket = io("http://localhost:3000")
+
+
+    useEffect(() => {
+        socket.on("members-update", (members) => {
+          setRoomMembers(members);
+        });
+    }, []);
 
     const handleJoinRoom = async () => {
         if (!inputRoomId.trim()) return;
@@ -33,11 +42,7 @@ function Dashboard() {
                 setInputRoomId("");
                 console.log(`Got username: ${data.username}`);
 
-                setRoomMembers(prevlist =>{
-                    let newlist = [...prevlist, data.username]
-                    console.log(newlist)
-                    return newlist
-                })
+                socket.emit("add-member", data.username);
             } else {
                 console.error("Failed to get username:", data.message);
             }
@@ -47,6 +52,9 @@ function Dashboard() {
     };
 
     const handleLeave = () =>{
+      if(socket) {
+        socket.emit("remove-member", username);
+      }
         setFlag(false);
         setRoomId("");
     }

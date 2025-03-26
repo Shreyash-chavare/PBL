@@ -2,6 +2,7 @@ html, body {
   height: 100%;
   margin: 0;
   align-content: center;
+  overflow-y: auto;
 }
 
 * {
@@ -17,7 +18,7 @@ html, body {
   gap: 20px;
   margin: 10px;
   width: 100%;
-  height: 100%;
+  height: 88%;
 }
 
 .room-members {
@@ -95,4 +96,10 @@ input::placeholder {
 
 .compiler-setup {
   border: 0;
+}
+
+
+
+#root {
+  height: 100%;
 }

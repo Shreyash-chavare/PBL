@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, User, Mail, Plus, LogIn, Code } from 'lucide-react';
 import { useAuthstore } from '../../stores/auth';
+import { useNavigate } from 'react-router-dom';
+import "./App.css"
 
 const Profile = () => {
   const [roomId, setRoomId] = useState('');
@@ -8,6 +10,7 @@ const Profile = () => {
   const {authUser}= useAuthstore();
   
   console.log('AuthUser in Profile:', authUser); // Debug log
+  const navigate = useNavigate();
   
   // Sample user data
   const userData = {
@@ -32,18 +35,9 @@ const Profile = () => {
     return data;
   }
 
-  const handleJoinRoom = () => {
-    console.log(`Joining room with ID: ${roomId}`);
-    // Room joining logic would go here
-  };
-
-  const handleCreateRoom = () => {
-    console.log(`Creating new room: ${newRoomName}`);
-    // Room creation logic would go here
-  };
 
   const handlePractice = () => {
-    console.log('Opening IDE practice environment');
+    navigate("/practice")
     // Practice environment logic would go here
   };
 
@@ -88,50 +82,7 @@ const Profile = () => {
             </button>
           </div>
           
-          {/* Rooms Section */}
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Rooms</h2>
-            
-            {/* Join Room Section */}
-            <div className="space-y-2">
-              <label className="text-sm text-gray-300">Join Room</label>
-              <div className="flex">
-                <input
-                  type="text"
-                  placeholder="Enter Room ID"
-                  className="flex-1 p-2 rounded-l text-black"
-                  value={roomId}
-                  onChange={(e) => setRoomId(e.target.value)}
-                />
-                <button
-                  className="bg-blue-600 text-white p-2 rounded-r hover:bg-blue-700"
-                  onClick={handleJoinRoom}
-                >
-                  <LogIn size={16} />
-                </button>
-              </div>
-            </div>
-            
-            {/* Create Room Section */}
-            <div className="space-y-2">
-              <label className="text-sm text-gray-300">Create Room</label>
-              <div className="flex">
-                <input
-                  type="text"
-                  placeholder="New Room Name"
-                  className="flex-1 p-2 rounded-l text-black"
-                  value={newRoomName}
-                  onChange={(e) => setNewRoomName(e.target.value)}
-                />
-                <button
-                  className="bg-green-600 text-white p-2 rounded-r hover:bg-green-700"
-                  onClick={handleCreateRoom}
-                >
-                  <Plus size={16} />
-                </button>
-              </div>
-            </div>
-          </div>
+
         </div>
       </div>
       
@@ -161,9 +112,7 @@ const Profile = () => {
               </div>
               
               <div className="mt-4 text-gray-600">
-                <span className="mr-4">
-                  <span className="font-semibold">5</span> Active Rooms
-                </span>
+
                 <span>
                   <span className="font-semibold">248</span> Days Active
                 </span>

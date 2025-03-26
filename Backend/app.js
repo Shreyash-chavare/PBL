@@ -13,23 +13,23 @@ import { Server } from "socket.io";
 
 
 
-const app=express();
+const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 3000;
 
 dotenv.config();
 
-const Mongo=mongodb
-Mongo.then(()=>{
+const Mongo = mongodb
+Mongo.then(() => {
     console.log("mongodb connected")
-}).catch(err=>{
-    console.error("Mongodb connection error",err)
+}).catch(err => {
+    console.error("Mongodb connection error", err)
 })
 
 
 
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieparser());
 app.use(cors({
     origin: ["http://localhost:5173", "http://localhost:5174"],
@@ -37,13 +37,13 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Accept', 'Authorization']
 }));
-    
+
 
 app.use(session({
     secret: process.env.JWT_TOKEN,
     resave: false,
     saveUninitialized: false,
-    cookie: { 
+    cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
         sameSite: 'lax',
@@ -53,72 +53,84 @@ app.use(session({
     rolling: true
 }));
 
-app.use('/',userRouter);
+app.use('/', userRouter);
 
-    const __filename = fileURLToPath(import.meta.url); 
-    let __dirname = path.dirname(__filename); 
-    
-    
-    app.use(express.static(path.join(__dirname,'public')));
+const __filename = fileURLToPath(import.meta.url);
+let __dirname = path.dirname(__filename);
 
-    const io = new Server(server, {
-        cors: {
-            origin: ["http://localhost:5173", "http://localhost:5174"],
-            methods: ["GET", "POST"],
-            credentials: true,
-            transports: ['websocket']
-        },
-        pingTimeout: 60000,
-        pingInterval: 25000
-    })
 
-    io.on('connection', (socket) => {
-        console.log('User connected:', socket.id);
+app.use(express.static(path.join(__dirname, 'public')));
 
-        // Store socket ID in a Set to track active connections
-        const activeConnections = new Set();
-        activeConnections.add(socket.id);
+const io = new Server(server, {
+    cors: {
+        origin: ["http://localhost:5173", "http://localhost:5174"],
+        methods: ["GET", "POST"],
+        credentials: true,
+        transports: ['websocket']
+    },
+    pingTimeout: 60000,
+    pingInterval: 25000
+})
 
-        socket.on("message", (data) => {
-            console.log(`Message from ${socket.id}:`, data);
-            io.emit("message", data);
-        });
+const members = new Set();
+io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
 
-        socket.on('disconnect', (reason) => {
-            console.log(`User disconnected (${reason}):`, socket.id);
-            activeConnections.delete(socket.id);
-        });
+    // Store socket ID in a Set to track active connections
+    const activeConnections = new Set();
+    activeConnections.add(socket.id);
 
-        socket.on("join-room", (room) => {
-            socket.join(room);
-        });
+    socket.on("message", (data) => {
+        console.log(`Message from ${socket.id}:`, data);
+        io.emit("message", data);
+    });
 
-        // Handle errors
-        socket.on('error', (error) => {
-            console.error('Socket error:', error);
-        });
+    socket.on('disconnect', (reason) => {
+        console.log(`User disconnected (${reason}):`, socket.id);
+        activeConnections.delete(socket.id);
+    });
+
+    socket.on("join-room", (room) => {
+        socket.join(room);
+    });
+
+    socket.on("add-member", (username) => {
+        members.add(username);
+        io.emit("members-update", Array.from(members));
     });
 
 
-    app.use((req, res, next) => {
-        if (req.session.user) {
-            res.locals.user = req.session.user;
-        }
-        next();
+    socket.on("remove-member", (username) => {
+        members.delete(username);
+        io.emit("members-update", Array.from(members));
     });
-    
-    
-    
-    
-    __dirname=path.dirname(fileURLToPath(import.meta.url))
-    
-    
-    
-    
-    app.post("/api/compile", async (req, res) => {
-        const { script, language, stdin } = req.body;
-        const clientId = process.env.JDOODLE_CLIENT_ID;
-        const clientSecret = process.env.JDOODLE_CLIENT_SECRET;
+
+    // Handle errors
+    socket.on('error', (error) => {
+        console.error('Socket error:', error);
+    });
+});
+
+
+app.use((req, res, next) => {
+    if (req.session.user) {
+        res.locals.user = req.session.user;
+    }
+    next();
+});
+
+
+
+
+__dirname = path.dirname(fileURLToPath(import.meta.url))
+
+
+
+
+app.post("/api/compile", async (req, res) => {
+    const { script, language, stdin } = req.body;
+    const clientId = process.env.JDOODLE_CLIENT_ID;
+    const clientSecret = process.env.JDOODLE_CLIENT_SECRET;
     const apiUrl = "https://api.jdoodle.com/v1/execute";
 
     const requestData = {
@@ -131,7 +143,7 @@ app.use('/',userRouter);
     };
 
     try {
-        console.log("Request data:", requestData); 
+        console.log("Request data:", requestData);
 
         const response = await fetch(apiUrl, {
             method: "POST",
@@ -142,7 +154,7 @@ app.use('/',userRouter);
         const responseText = await response.text();
         console.log("Full response from API:", responseText);
 
-        const result = JSON.parse(responseText); 
+        const result = JSON.parse(responseText);
         res.json({ output: result.output || result.error });
     } catch (error) {
         console.error("Error occurred while fetching data from JDOODLE API:", error);
@@ -156,12 +168,12 @@ app.use('/',userRouter);
 //     else{
 //         res.redirect('/login');
 //     }  
-    
+
 // })
 
 
 
 
-server.listen(PORT, ()=>{
+server.listen(PORT, () => {
     console.log("Server running on port 3000")
 });
