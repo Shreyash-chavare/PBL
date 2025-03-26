@@ -33,14 +33,14 @@ function App() {
   const isAppRoute = location.pathname === '/app';
   
   return (
-    <div className={`${isAppRoute ? 'h-screen' : 'min-h-screen'} bg-gray-100`}>
+    <div className={`${isAppRoute ? 'h-screen' : 'min-h-screen'} bg-[#111111]`}>
       <Navbar />
       <Routes>
         <Route path="/" element={<Fat />} />
         <Route path="/practice" element={<JDoodleCompiler />} />
         <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/"/>} />  
         <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/"/>} />  
-        <Route path="/app" element={authUser ? <Dashboard /> : <Navigate to="/login"/>} />
+        <Route path="/app" element={authUser ? <Dashboard /> : <Navigate to="/login"/>} /> 
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login"/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />

@@ -52,57 +52,62 @@ function Dashboard() {
     }
 
     return (
-        <>
-            <div className='container w-1'>
-                {flag ? 
-                 <div className='room-members'>
-                    <div className='squad-name'>
-                        <h1> Squad </h1>
-                    </div>
-                    <div className='player-box'>
-                        <div className='player-details'>
-                            <div className='player'>
-                                {roomMembers.map(member => {
-                                return <h2 key={member}>{member}</h2>
-
-                                })}
-                                
-                            </div>
-                        </div>
- 
-                    </div>
-
-                    <div className='room-detail'>
-                        <h3> Room ID: {roomId}</h3>
-                        <button onClick={handleLeave} className='leave-button'> Leave </button>
-                    </div>
-                </div> :
-
-                <div className="space-y-2">
-                    <label className="text-sm text-black-300">Join Room</label>
-                    <div className="flex">
-                        <input
-                            type="text"
-                            placeholder="Enter Room ID"
-                            className="flex-1 p-2 rounded-l text-black"
-                            value={inputRoomId}
-                            onChange={(e) => setInputRoomId(e.target.value)}
-                        />
-                        <button
-                            className="bg-blue-600 text-white p-2 rounded-r hover:bg-blue-700"
-                            onClick={handleJoinRoom}
-                        >
-                            <LogIn size={16} />
-                        </button>
-                    </div>
-                </div>}
-
-                <div className='compiler-setup'>
-                    <OnlineCompiler setParentReview={setReviewData} room={roomId} setFlag = {setFlag} flag ={flag}/>
+      <>
+        <div className="container w-1">
+          {flag ? (
+            <div className="room-members">
+              <div className="squad-name">
+                <h1> Squad </h1>
+              </div>
+              <div className="player-box">
+                <div className="player-details">
+                  <div className="player">
+                    {roomMembers.map((member) => {
+                      return <h2 key={member}>{member}</h2>;
+                    })}
+                  </div>
                 </div>
-            </div>
+              </div>
 
-        </>
+              <div className="room-detail">
+                <h3> Room ID: {roomId}</h3>
+                <button onClick={handleLeave} className="leave-button">
+                  {" "}
+                  Leave{" "}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2 bg-[#111111]">
+              <label className="text-sm text-gray-300">Join Room</label>
+              <div className="flex">
+                <input
+                  type="text"
+                  placeholder="Enter Room ID"
+                  className="flex-1 p-2 rounded-l text-white bg-[#1a1a1a]  border-gray-700 placeholder-gray-500"
+                  value={inputRoomId}
+                  onChange={(e) => setInputRoomId(e.target.value)}
+                />
+                <button
+                  className="bg-[#1a1a1a] text-[#d1d0c5] p-2 rounded-r hover:bg-[#111111] transition-colors duration-200"
+                  onClick={handleJoinRoom}
+                >
+                  <LogIn size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="compiler-setup">
+            <OnlineCompiler
+              setParentReview={setReviewData}
+              room={roomId}
+              setFlag={setFlag}
+              flag={flag}
+            />
+          </div>
+        </div>
+      </>
     );
 }
 
