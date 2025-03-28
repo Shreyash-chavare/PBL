@@ -73,7 +73,8 @@ const io = new Server(server, {
     pingInterval: 25000
 })
 
-const members = new Set();
+const roomMembers = new Map();
+let roomname = null; 
 io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 
@@ -83,7 +84,10 @@ io.on('connection', (socket) => {
 
     socket.on("message", (data) => {
         console.log(`Message from ${socket.id}:`, data);
-        io.emit("message", data);
+        if (roomname) {
+            socket.to(roomname).emit("message", data);
+        } 
+        
     });
 
     socket.on('disconnect', (reason) => {
@@ -93,17 +97,36 @@ io.on('connection', (socket) => {
 
     socket.on("join-room", (room) => {
         socket.join(room);
+        roomname = room;
+        console.log(`User joined room ${roomname}`);
     });
 
-    socket.on("add-member", (username) => {
-        members.add(username);
-        io.emit("members-update", Array.from(members));
+    socket.on("leave-room", () => {
+        console.log(`User ${socket.id} left room ${roomname}`);
+        socket.leave(roomname);
+        roomname = null;
+    });
+
+    socket.on("add-member", ({room, username}) => {
+        if(!roomMembers.has(room)) {
+            roomMembers.set(room, new Set());
+        }
+        roomMembers.get(room).add(username);
+        console.log(Array.from(roomMembers.get(room)))
+
+        io.to(room).emit("members-update", Array.from(roomMembers.get(room)));
     });
 
 
-    socket.on("remove-member", (username) => {
-        members.delete(username);
-        io.emit("members-update", Array.from(members));
+    socket.on("remove-member", ({room,username}) => {
+        if(roomMembers.has(room)) {
+            roomMembers.get(room).delete(username);
+            if(roomMembers.get(room).size === 0){
+                roomMembers.delete(room);
+            } else{
+                io.to(room).emit("members-update", Array.from(roomMembers.get(room)));
+            }
+        }
     });
 
     // Handle errors

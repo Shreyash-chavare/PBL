@@ -45,8 +45,10 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
     }, [room]);
 
     const handleJoinRoom = () => {
+        if (socketRef.current) {
         socketRef.current.emit("join-room", room);
         setFlag(true);
+        }
     };
 
     useEffect(() => {

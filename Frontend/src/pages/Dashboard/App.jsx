@@ -18,12 +18,12 @@ function Dashboard() {
     useEffect(() => {
         socket.on("members-update", (members) => {
           setRoomMembers(members);
+          console.log(membersembers)
         });
     }, []);
 
     const handleJoinRoom = async () => {
         if (!inputRoomId.trim()) return;
-
         try {
             const response = await fetch(`http://localhost:3000/getUsername`, {
                 method: "GET",
@@ -36,13 +36,17 @@ function Dashboard() {
             const data = await response.json();
             
             if (response.ok) {
+              socket.emit("add-member", {
+                room: inputRoomId,
+                username: data.username
+              });
                 setUsername(data.username);
                 setRoomId(inputRoomId);
                 setFlag(true);
                 setInputRoomId("");
                 console.log(`Got username: ${data.username}`);
 
-                socket.emit("add-member", data.username);
+                console.log(roomMembers)
             } else {
                 console.error("Failed to get username:", data.message);
             }
@@ -53,10 +57,16 @@ function Dashboard() {
 
     const handleLeave = () =>{
       if(socket) {
-        socket.emit("remove-member", username);
-      }
+        socket.emit("leave-room");
+        
+        socket.emit("remove-member", {
+          room: roomId,
+          username: username
+        });
         setFlag(false);
         setRoomId("");
+        setRoomMembers([])
+      }
     }
 
     return (
