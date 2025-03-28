@@ -191,9 +191,12 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
                         spellCheck="false"
                     />
                 </div>
-                <button onClick={handleMinimize}> BUTTON </button>
+                <button className="hover:bg-[#323437] h-10 p-2"
+                    onClick={handleMinimize}> 
+                        BUTTON 
+                </button>
             {minimize && (
-                <div className="io-pane">
+                <div className="io-pane z-100">
                     
                     <div className="input-section">
                         <div className="section-header">Input</div>

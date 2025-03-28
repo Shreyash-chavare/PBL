@@ -86,7 +86,7 @@ function Dashboard() {
               </div>
             </div>
           ) : (
-            <div className="space-y-2 bg-[#111111]">
+            <div className="space-y-2 bg-[#111111] w-1/2">
               <label className="text-sm text-gray-300">Join Room</label>
               <div className="flex">
                 <input
