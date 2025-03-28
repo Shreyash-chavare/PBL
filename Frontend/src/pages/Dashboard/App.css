@@ -9,6 +9,7 @@ html, body {
   box-sizing: border-box; /* Ensure borders and padding are included in element size */
 }
 
+
 .container {
   
   border-radius: 10px;
@@ -23,7 +24,7 @@ html, body {
 
 .room-members {
   background-color: #222222; /* Dark background */
-  border: 1px solid rgba(100, 100, 100, 0.5); /* Subtle border */
+  border: 1px solid #e29a14; /* Subtle border */
   width: 25%;
   padding: 20px;
   border-radius: 10px;
@@ -34,7 +35,7 @@ html, body {
 
 .compiler-setup {
 
-  border: 1px solid rgba(100, 100, 100, 0.5); /* Subtle border */
+  border: 5px solid #e29a14; /* Subtle border */
   width: 100%;
   padding: 0;
   border-radius: 10px;

@@ -17,6 +17,7 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
     const [isRunning, setIsRunning] = useState(false);
     const [showReview, setShowReview] = useState(false);
     const socketRef = useRef(null);
+    const [minimize , setMinimize] = useState(true);
 
     // Save code to localStorage whenever it changes
     useEffect(() => {
@@ -134,6 +135,10 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
         }
     };
 
+     const handleMinimize = () => {
+        setMinimize(!minimize);
+    };
+
     return (
         <div className={`compiler-container ${showReview ? 'review-open' : ''}`}>
             <div className="compiler-header">
@@ -186,8 +191,10 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
                         spellCheck="false"
                     />
                 </div>
-
+                <button onClick={handleMinimize}> BUTTON </button>
+            {minimize && (
                 <div className="io-pane">
+                    
                     <div className="input-section">
                         <div className="section-header">Input</div>
                         <textarea
@@ -202,8 +209,8 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
                         <pre className="output-display">{output}</pre>
                     </div>
                 </div>
+            )}   
             </div>
-
             {showReview && (
                 <div className="review-panel">
                     <div className="review-header">

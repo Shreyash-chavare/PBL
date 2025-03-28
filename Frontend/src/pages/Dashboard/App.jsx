@@ -92,12 +92,12 @@ function Dashboard() {
                 <input
                   type="text"
                   placeholder="Enter Room ID"
-                  className="flex-1 p-2 rounded-l text-white bg-[#1a1a1a]  border-gray-700 placeholder-gray-500"
+                  className="flex-1 p-2 rounded-l text-white bg-[#1a1a1a]  border-gray-700 placeholder-gray-500 outline-none focus:ring-0"
                   value={inputRoomId}
                   onChange={(e) => setInputRoomId(e.target.value)}
                 />
                 <button
-                  className="bg-[#1a1a1a] text-[#d1d0c5] p-2 rounded-r hover:bg-[#111111] transition-colors duration-200"
+                  className="bg-[#1a1a1a] text-[#d1d0c5] p-2 rounded-r hover:bg-[#111111] border-gray-700 transition-colors duration-200"
                   onClick={handleJoinRoom}
                 >
                   <LogIn size={16} />
