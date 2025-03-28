@@ -71,74 +71,73 @@ const LeetCodeProblems = () => {
     if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
 
     return (
-        <div className="p-4 space-y-6">
-            <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="text-xl font-bold mb-4">Search Problem</h2>
+        <div className="p-4 space-y-6 bg-[#111111] text-[#d1d0c5]">
+            <div className="bg-[#1a1a1a] rounded-lg shadow p-4">
+                <h2 className="text-xl font-bold mb-4 text-[#d1d0c5]">Search Problem</h2>
                 <div className="flex gap-2">
                     <input
                         type="text"
                         value={questionId}
                         onChange={(e) => setQuestionId(e.target.value)}
                         placeholder="Enter question ID"
-                        className="flex-1 p-2 border rounded"
+                        className="flex-1 p-2 rounded bg-[#111111] border-gray-700 text-[#d1d0c5] placeholder-gray-500"
                     />
                     <button
                         onClick={handleSearchQuestion}
                         disabled={searchLoading}
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-blue-300"
+                        className="bg-[#1a1a1a] text-[#d1d0c5] px-4 py-2 rounded hover:bg-[#111111] disabled:opacity-50 border border-gray-700"
                     >
                         {searchLoading ? 'Searching...' : 'Search'}
                     </button>
                 </div>
 
                 {selectedProblem && 
-                    <div className="mt-4 p-4 border rounded">
-                        <h3 className="text-lg font-semibold">{selectedProblem.title}</h3>
+                    <div className="mt-4 p-4 border border-gray-700 rounded bg-[#111111]">
+                        <h3 className="text-lg font-semibold text-[#d1d0c5]">{selectedProblem.title}</h3>
                         <div className="mt-2 space-y-2">
                             <p><span className="font-medium">Difficulty:</span> 
                                 <span className={`ml-2 px-2 py-1 rounded text-sm ${
-                                    selectedProblem.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
-                                    selectedProblem.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-red-100 text-red-800'
+                                    selectedProblem.difficulty === 'Easy' ? 'bg-green-900 text-green-100' :
+                                    selectedProblem.difficulty === 'Medium' ? 'bg-yellow-900 text-yellow-100' :
+                                    'bg-red-900 text-red-100'
                                 }`}>
                                     {selectedProblem.difficulty}
                                 </span>
                             </p>
                             <p><span className="font-medium">Success Rate:</span> {selectedProblem.acRate?.toFixed(1)}%</p>
-                            {selectedProblem.topicTags && 
-                                <div>
-                                    <span className="font-medium">Topics:</span>
-                                    <div className="flex flex-wrap gap-2 mt-1">
-                                        {selectedProblem.topicTags.map((tag) => (
-                                            <span 
-                                                key={tag} 
-                                                className="bg-gray-100 px-2 py-1 rounded text-sm"
-                                            >
-                                                {tag}
-                                            </span>
-                                        ))}
-                                    </div>
+                            
+                            <div>
+                                <span className="font-medium">Topics:</span>
+                                <div className="flex flex-wrap gap-2 mt-1">
+                                    {selectedProblem.topicTags.map((tag) => (
+                                        <span 
+                                            key={tag.name}
+                                            className="bg-[#1a1a1a] text-[#d1d0c5] px-2 py-1 rounded text-sm border border-gray-700"
+                                        >
+                                            {tag.name}
+                                        </span>
+                                    ))}
                                 </div>
-                            }
+                            </div>
                         </div>
                     </div>
                 }
             </div>
 
-            <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="text-xl font-bold mb-4">All Problems</h2>
+            <div className="bg-[#1a1a1a] rounded-lg shadow p-4">
+                <h2 className="text-xl font-bold mb-4 text-[#d1d0c5]">All Problems</h2>
                 {problemlist.length > 0 ? (
                     <div className="space-y-2">
                         {problemlist.map(problem => (
                             <div 
                                 key={problem.questionFrontendId}
-                                className="p-3 border rounded hover:bg-gray-50"
+                                className="p-3 border border-gray-700 rounded bg-[#111111] hover:bg-[#1a1a1a] transition-colors"
                             >
                                 <span className="font-medium">{problem.questionFrontendId}.</span> {problem.title}
                                 <span className={`ml-2 px-2 py-1 rounded text-sm ${
-                                    problem.difficulty === 'Easy' ? 'bg-green-100 text-green-800' :
-                                    problem.difficulty === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
-                                    'bg-red-100 text-red-800'
+                                    problem.difficulty === 'Easy' ? 'bg-green-900 text-green-100' :
+                                    problem.difficulty === 'Medium' ? 'bg-yellow-900 text-yellow-100' :
+                                    'bg-red-900 text-red-100'
                                 }`}>
                                     {problem.difficulty}
                                 </span>
