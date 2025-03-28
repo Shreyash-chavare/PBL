@@ -10,6 +10,7 @@ import mongodb from './config/mongoose-connection.js'
 import isLoggedIn from './middleware/isloggedin.js';
 import dotenv from 'dotenv';
 import { Server } from "socket.io";
+import { LeetCode } from 'leetcode-query';
 
 
 
@@ -171,6 +172,59 @@ app.post("/api/compile", async (req, res) => {
 
 // })
 
+
+
+// Add before server.listen()
+app.get('/api/leetcode/problems', async (req, res) => {
+    const leetcode = new LeetCode();
+    try {
+        console.log('Fetching LeetCode problems...'); // Debug log
+        const problemlist = await leetcode.problems();
+        
+        if (!problemlist) {
+            throw new Error('No problems returned from LeetCode API');
+        }
+
+        // Cache the results for 1 hour
+        const cacheData = {
+            timestamp: Date.now(),
+            data: problemlist
+        };
+        
+        console.log(`Successfully fetched ${problemlist.questions.length} problems`); // Debug log
+        res.json(problemlist.questions);
+    } catch (error) {
+        console.error('Detailed LeetCode API error:', {
+            message: error.message,
+            stack: error.stack
+        });
+        res.status(500).json({ 
+            error: 'Failed to fetch problems',
+            details: error.message 
+        });
+    }
+});
+
+app.get('/api/leetcode/problem/:id', async (req, res) => {
+    try {
+        const leetcode = new LeetCode();
+        const problemlist = await leetcode.problems();
+        const selected_problem = problemlist.questions.find(p => p.questionFrontendId === req.params.id.slice(1));
+        console.log(req.params)
+        if (!selected_problem) {
+            return res.status(404).json({ error: 'Problem not found' });
+        }
+        
+        res.json(selected_problem);
+        console.log("fetched", selected_problem)
+    } catch (error) {
+        console.error('LeetCode API error:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch problem',
+            details: error.message 
+        });
+    }
+});
 
 
 

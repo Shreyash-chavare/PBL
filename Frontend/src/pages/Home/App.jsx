@@ -12,6 +12,7 @@ import { useAuthstore } from '../../stores/auth';
 import { Loader } from 'lucide-react';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
+import LeetCodeProblems from '../Dashboard/LeetCodeProblems';
 
 function App() {
   const {checkauth, authUser, isCheckingAuth} = useAuthstore();
@@ -44,6 +45,7 @@ function App() {
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login"/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
+        <Route path="/problems" element={<LeetCodeProblems />} />
       </Routes>
       <Toaster position="top-center" richColors closeButton />
     </div>
