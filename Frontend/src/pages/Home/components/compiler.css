@@ -4,9 +4,9 @@ html, body {
     height: 100%;
     width: 100%;
     font-family: 'Roboto';
-    background-color: #1a1a1a; /* Much darker background */
-    color: #d1d0c5; /* Muted text color */
-    overflow: hidden; /* Prevent scrollbars unless necessary */
+    background-color: #1a1a1a; 
+    color: #d1d0c5;
+    overflow: hidden; 
 }
 
 .main-container{
@@ -40,7 +40,7 @@ html, body {
     flex-direction: column;
     height: 100%;
 
-    background-color: #111111; /* Even darker background for focus */
+    background-color: #111111; 
     border-radius: 16px;
     overflow: hidden;
     padding: 20px;
@@ -59,7 +59,7 @@ html, body {
     padding: 20px 24px;
    
     border-bottom: 1px solid #222;
-    font-size: 16px; /* Slightly larger font */
+    font-size: 16px; 
 }
 
 .language-selector {
@@ -69,7 +69,7 @@ html, body {
 
 
 .language-select {
-    background-color: #1a1a1a; /* Dark select background */
+    background-color: #1a1a1a; 
     color: #d1d0c5;
     border: none;
     padding: 10px 14px;
@@ -80,10 +80,10 @@ html, body {
 }
 
 .language-select:hover {
-    background-color: #333333; /* Slight hover effect */
+    background-color: #333333; 
 }
 
-/* Compiler Controls */
+
 .compiler-controls {
     display: flex;
     gap: 14px;
@@ -104,11 +104,11 @@ html, body {
 }
 
 .control-btn:hover {
-    background-color: #222222; /* Darker on hover */
+    background-color: #222222; 
 }
 
 .control-btn:active {
-    transform: scale(0.97); /* Slight shrink on click */
+    transform: scale(0.97); 
 }
 
 .control-btn .icon {
@@ -127,7 +127,7 @@ html, body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background-color: #111111; /* Very dark editor background */
+    background-color: #111111; 
     border-right: 1px solid #222;
 }
 
@@ -147,7 +147,7 @@ html, body {
     flex: 1;
     padding: 20px;
     background-color: #111111;
-    color: #e29a14; /* Yellowish syntax highlighting */
+    color: #e29a14;
     border: none;
     font-family: 'Consolas', 'Monaco', monospace;
     font-size: 15px;
@@ -157,7 +157,7 @@ html, body {
     white-space: pre;
 }
 
-/* I/O Pane */
+
 .io-pane {
     width: 300px;
     display: flex;
@@ -202,7 +202,7 @@ html, body {
     border-color: #333333;
 }
 
-/* Scrollbar Styling */
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -221,7 +221,7 @@ html, body {
     background: #444444;
 }
 
-/* Review Panel */
+
 .review-panel {
     position: fixed;
     top: 0;

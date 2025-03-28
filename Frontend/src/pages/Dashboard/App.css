@@ -50,7 +50,7 @@ html, body {
 .leave-button {
   padding: 8px 20px;
   color: white;
-  background-color: #444444; /* Darker gray for background */
+  background-color: #444444; 
   border: none;
   margin: 10px;
   border-radius: 5px;
@@ -58,19 +58,19 @@ html, body {
 }
 
 .leave-button:hover {
-  background-color: #b22222; /* Red color for hover */
+  background-color: #b22222; 
 }
 
 h1 {
   font-weight: bold;
   font-size: 190%;
-  color: #e29a14; /* Accent color */
+  color: #e29a14; 
 }
 
 h2 {
   font-size: 120%;
   font-weight: 450;
-  color: #cccccc; /* Light gray for text */
+  color: #cccccc; 
 }
 
 .squad-name {
@@ -86,12 +86,12 @@ h2 {
 .player {
   padding: 5px;
   border-radius: 5px;
-  background-color: #2a2a2a; /* Darker gray for background */
-  color: #ffffff; /* Light text */
+  background-color: #2a2a2a; 
+  color: #ffffff; 
 }
 
 input::placeholder {
-  color: #777777; /* Placeholder color */
+  color: #777777;
 }
 
 .compiler-setup {
