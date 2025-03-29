@@ -15,6 +15,7 @@ function Dashboard() {
     const socketRef = useRef(null);
     
     
+    
     useEffect(() => {
       socketRef.current = io("http://localhost:3000")
         socketRef.current.on("members-update", (members) => {
@@ -76,7 +77,9 @@ function Dashboard() {
 
     return (
       <>
-        <div className="container w-1 pt-0">
+        <div className="container w-1 pt">
+          <div className='w-2/5'>
+
           {flag ? (
             <div className="room-members">
               <div className="squad-name">
@@ -101,7 +104,7 @@ function Dashboard() {
               </div>
             </div>
           ) : (
-            <div className="space-y-2 bg-[#111111] w-1/2">
+            <div className="space-y-2 bg-[#111111] w-full h-1/3 roomjoin">
               <label className="text-sm text-gray-300">Join Room</label>
               <div className="flex">
                 <input
@@ -110,7 +113,7 @@ function Dashboard() {
                   className="flex-1 p-2 rounded-l text-white bg-[#1a1a1a]  border-gray-700 placeholder-gray-500 outline-none focus:ring-0"
                   value={inputRoomId}
                   onChange={(e) => setInputRoomId(e.target.value)}
-                />
+                  />
                 <button
                   className="bg-[#1a1a1a] text-[#d1d0c5] p-2 rounded-r hover:bg-[#111111] border-gray-700 transition-colors duration-200"
                   onClick={handleJoinRoom}
@@ -121,6 +124,11 @@ function Dashboard() {
             </div>
           )}
 
+          <div className='w-full h-2/3'>
+            <h2>Problem Statment</h2>
+          </div>
+
+          </div>
           <div className="compiler-setup">
             <OnlineCompiler
               setParentReview={setReviewData}

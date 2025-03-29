@@ -23,13 +23,26 @@ html, body {
   height: 88%;
 }
 
+.roomjoin{
+  border-right: 1px solid #222; /* Subtle border */
+  border-bottom: 1px solid #222; /* Subtle border */
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  height: 33.3%;
+  flex-direction: column;
+  flex-grow: 0;
+}
+
 .room-members {
-  background-color: #222222; /* Dark background */
-  border: 1px solid #e29a14; /* Subtle border */
-  width: 25%;
+  border-right: 1px solid #222; /* Subtle border */
+  border-bottom: 1px solid #222; /* Subtle border */
+  overflow-y: auto;
+  width: 100%;
   padding: 20px;
   border-radius: 10px;
   display: flex;
+  height: 33.3%;
   flex-direction: column;
   flex-grow: 0;
 }

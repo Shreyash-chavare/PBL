@@ -205,7 +205,7 @@ app.get('/api/leetcode/problems', async (req, res) => {
     const leetcode = new LeetCode();
     try {
         console.log('Fetching LeetCode problems...'); // Debug log
-        const problemlist = await leetcode.problems();
+        const problemlist = await leetcode.problems({limit: 10});
         
         if (!problemlist) {
             throw new Error('No problems returned from LeetCode API');
@@ -235,8 +235,9 @@ app.get('/api/leetcode/problem/:id', async (req, res) => {
     try {
         const leetcode = new LeetCode();
         const problemlist = await leetcode.problems();
-        const selected_problem = problemlist.questions.find(p => p.questionFrontendId === req.params.id.slice(1));
-        console.log(req.params)
+        const selected_problem1 = problemlist.questions.find(p => p.questionFrontendId === req.params.id.slice(1));
+        const selected_problem = await leetcode.problem(selected_problem1.titleSlug);
+        console.log(selected_problem)
         if (!selected_problem) {
             return res.status(404).json({ error: 'Problem not found' });
         }
