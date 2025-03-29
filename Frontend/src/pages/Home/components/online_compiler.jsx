@@ -17,7 +17,7 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
     const [isRunning, setIsRunning] = useState(false);
     const [showReview, setShowReview] = useState(false);
     const socketRef = useRef(null);
-    const [minimize , setMinimize] = useState(true);
+    const [minimize , setMinimize] = useState(false);
 
 
 

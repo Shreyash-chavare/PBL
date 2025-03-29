@@ -76,7 +76,7 @@ function Dashboard() {
 
     return (
       <>
-        <div className="container w-1">
+        <div className="container w-1 pt-0">
           {flag ? (
             <div className="room-members">
               <div className="squad-name">
