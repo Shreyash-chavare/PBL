@@ -74,37 +74,41 @@ const io = new Server(server, {
 })
 
 const roomMembers = new Map();
-let roomname = null; 
+const activeConnections = new Set();
 io.on('connection', (socket) => {
-    console.log('User connected:', socket.id);
+    let currentroom = null;
+    const socketID = socket.id;
+    console.log('User connected:', socketID);
 
     // Store socket ID in a Set to track active connections
-    const activeConnections = new Set();
-    activeConnections.add(socket.id);
-
-    socket.on("message", (data) => {
-        console.log(`Message from ${socket.id}:`, data);
-        if (roomname) {
-            socket.to(roomname).emit("message", data);
-        } 
-        
-    });
-
-    socket.on('disconnect', (reason) => {
-        console.log(`User disconnected (${reason}):`, socket.id);
-        activeConnections.delete(socket.id);
-    });
+    activeConnections.add(socketID);
 
     socket.on("join-room", (room) => {
         socket.join(room);
-        roomname = room;
-        console.log(`User joined room ${roomname}`);
+        currentroom = room;
+        console.log(`User joined room ${currentroom}`);
     });
 
+    socket.on("message", (data) => {
+        console.log(`Message from ${socketID}:`, data.writtencode, "to", data.roomname);
+        socket.to(data.roomname).emit("message", {roomname: data.roomname, writtencode: data.writtencode});
+        }
+        
+    );
+
+    socket.on('disconnect', (reason) => {
+        console.log(`User disconnected (${reason}):`, socketID);
+        activeConnections.delete(socketID);
+    });
+
+
+
     socket.on("leave-room", () => {
-        console.log(`User ${socket.id} left room ${roomname}`);
-        socket.leave(roomname);
-        roomname = null;
+        if(currentroom){
+            socket.leave(currentroom)
+            currentroom = null
+        }
+        console.log(`User ${socketID} left room ${currentroom}`);
     });
 
     socket.on("add-member", ({room, username}) => {
@@ -112,9 +116,8 @@ io.on('connection', (socket) => {
             roomMembers.set(room, new Set());
         }
         roomMembers.get(room).add(username);
-        console.log(Array.from(roomMembers.get(room)))
-
         io.to(room).emit("members-update", Array.from(roomMembers.get(room)));
+        console.log("arr", Array.from(roomMembers.get(room)))
     });
 
 

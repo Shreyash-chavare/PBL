@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './App.css';
 import { LogIn } from 'lucide-react';
@@ -12,13 +12,15 @@ function Dashboard() {
     const [flag, setFlag] = useState(false)
     const [roomMembers, setRoomMembers] = useState([]); // State to hold room members
     const [username, setUsername] = useState("");
-    const socket = io("http://localhost:3000")
-
-
+    const socketRef = useRef(null);
+    
+    
     useEffect(() => {
-        socket.on("members-update", (members) => {
-          setRoomMembers(members);
-          console.log(membersembers)
+      socketRef.current = io("http://localhost:3000")
+        socketRef.current.on("members-update", (members) => {
+          console.log("members", members)
+          setRoomMembers( members);
+          // console.log(membersembers)
         });
     }, []);
 
@@ -36,17 +38,20 @@ function Dashboard() {
             const data = await response.json();
             
             if (response.ok) {
-              socket.emit("add-member", {
+              setUsername(data.username);
+              setRoomId(inputRoomId);
+              setFlag(true);
+              setInputRoomId("");
+              console.log(`Got username: ${data.username}`);
+
+              socketRef.current.emit("join-room", inputRoomId);
+
+              socketRef.current.emit("add-member", {
                 room: inputRoomId,
                 username: data.username
               });
-                setUsername(data.username);
-                setRoomId(inputRoomId);
-                setFlag(true);
-                setInputRoomId("");
-                console.log(`Got username: ${data.username}`);
 
-                console.log(roomMembers)
+                // console.log("members", roomMembers)
             } else {
                 console.error("Failed to get username:", data.message);
             }
@@ -56,10 +61,10 @@ function Dashboard() {
     };
 
     const handleLeave = () =>{
-      if(socket) {
-        socket.emit("leave-room");
+      if(socketRef.current) {
+        socketRef.current.emit("leave-room");
         
-        socket.emit("remove-member", {
+        socketRef.current.emit("remove-member", {
           room: roomId,
           username: username
         });

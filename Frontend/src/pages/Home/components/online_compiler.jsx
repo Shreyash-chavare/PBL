@@ -19,6 +19,8 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
     const socketRef = useRef(null);
     const [minimize , setMinimize] = useState(true);
 
+
+
     // Save code to localStorage whenever it changes
     useEffect(() => {
         localStorage.setItem('compiler_code', code);
@@ -51,8 +53,47 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
         }
     };
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     if(!socketRef.current){
+    //         socketRef.current = io("http://localhost:3000", {
+    //             withCredentials: true,
+    //             transports: ['websocket'],
+    //             timeout: 10000,
+    //             reconnection: true,
+    //             reconnectionDelay: 1000,
+    //             reconnectionDelayMax: 5000,
+    //             reconnectionAttempts: 5
+    //         })};
 
+
+    //       socketRef.current.on("connect", () => {
+    //             console.log("Connected to server:", socketRef.current.id);
+    //             setSocketId(socketRef.current.id);
+    //         });
+
+    //         socketRef.current.on("connect_error", (error) => {
+    //             console.error("Socket connection error:", error);
+    //         });
+
+    //         socketRef.current.on("message", (data) => {
+    //             console.log(data.roomname, "room", room)
+    //             if (data.roomname === room) {
+    //                 setCode(data.writtencode);
+    //             }
+    //         });
+        
+        
+
+    //     return () => {
+    //         if (socketRef.current && socketRef.current.connected) {
+    //             console.log("Cleaning up socket connection");
+    //             socketRef.current.disconnect();
+    //             socketRef.current = null;
+    //         }
+    //     };
+    // }, [room]);
+
+    useEffect(() => {
         if (!socketRef.current) {
             socketRef.current = io("http://localhost:3000", {
                 withCredentials: true,
@@ -63,29 +104,46 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
                 reconnectionDelayMax: 5000,
                 reconnectionAttempts: 5
             });
-
-            socketRef.current.on("connect", () => {
-                console.log("Connected to server:", socketRef.current.id);
-                setSocketId(socketRef.current.id);
-            });
-
-            socketRef.current.on("connect_error", (error) => {
-                console.error("Socket connection error:", error);
-            });
-
-            socketRef.current.on("message", (data) => {
-                setCode(data);
-            });
         }
-
-        return () => {
-            if (socketRef.current && socketRef.current.connected) {
-                console.log("Cleaning up socket connection");
-                socketRef.current.disconnect();
-                socketRef.current = null;
+    }, []); // Run once on mount
+    
+    // Handle socket events in a separate useEffect
+    useEffect(() => {
+        if (!socketRef.current) return;
+    
+        const socket = socketRef.current;
+    
+        // Remove existing listeners to prevent duplicates
+        socket.off("connect");
+        socket.off("connect_error");
+        socket.off("message");
+    
+        // Add listeners
+        socket.on("connect", () => {
+            console.log("Connected to server:", socket.id);
+            setSocketId(socket.id);
+        });
+    
+        socket.on("connect_error", (error) => {
+            console.error("Socket connection error:", error);
+        });
+    
+        socket.on("message", (data) => {
+            console.log("Message received:", data);
+            console.log("Current room:", room);
+            if (data.roomname === room) {
+                console.log("Setting code to:", data.writtencode);
+                setCode(data.writtencode);
             }
+        });
+    
+        return () => {
+            socket.off("connect");
+            socket.off("connect_error");
+            socket.off("message");
         };
-    }, []);
+    }, [room, socketRef.current]); // Run when room or socket changes
+    
 
     const handleRunCode = async () => {
         setIsRunning(true);
@@ -119,8 +177,9 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
     };
 
     const handleTextArea = (e) => {
-        setCode(e.target.value);
-        socketRef.current.emit("message", e.target.value);
+        const newCode = e.target.value;
+        setCode(newCode);
+        socketRef.current.emit("message", {roomname: room, writtencode: newCode});
     };
 
     const runcode = async () => {

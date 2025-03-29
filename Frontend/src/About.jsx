@@ -4,7 +4,7 @@ import './index.css'
 import About from './pages/About/App'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+
     <About />
-  </StrictMode>,
+
 )
