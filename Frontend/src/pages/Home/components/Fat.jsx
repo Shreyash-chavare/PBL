@@ -15,6 +15,12 @@ const Fat = () => {
     }
   };
 
+  const handlePractice = () =>{
+    navigate('/practice', { state:{
+      setlang: "python"
+    }})
+  }
+
   return (
     <div className='fat relative'>
       <div className="textbox pt-36 pl-20">
@@ -25,9 +31,7 @@ const Fat = () => {
           <button onClick={handleStartCollaborating}>
             Start Collaborating
           </button>
-          <Link to="/practice">
-            <button>Practice</button>
-          </Link>
+            <button onClick={handlePractice}>Practice</button>
         </div>
       </div>
       <div className="image"></div>

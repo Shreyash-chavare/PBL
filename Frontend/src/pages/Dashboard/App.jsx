@@ -175,7 +175,7 @@ function Dashboard() {
     <div className="container">
       <div className='problem-section'>
         {flag ? (
-          <div className="room-members bg-[#111111] p-4 rounded-lg mb-4">
+          <div className={`bg-[#111111] p-4 rounded-lg mb-4 ${problemData? 'room-members': 'fullroom'}`}>
             <div className="squad-header">
                 <div className="squad-name">
                   <h1 className="mr-8"> Squad </h1>
@@ -205,7 +205,7 @@ function Dashboard() {
             </div>
           </div>
         ) : (
-          <div className="join-room-section bg-[#111111] p-4 rounded-lg mb-4">
+          <div className={` bg-[#111111] p-4 rounded-lg mb-4 ${problemData? 'join-room-section': 'fullroom'}`}>
             <label className="text-sm text-gray-300">Join Room</label>
             <div className="flex mt-2">
               <input
@@ -225,7 +225,7 @@ function Dashboard() {
           </div>
         )}
 
-        <div className="problem-content-section">
+        <div className={`${problemData? 'problem-content-section': 'no-content'}`}>
           <h2 className="section-title">Problem Statement</h2>
           <div className="problem-header">
             <div className="flex items-center gap-2">
@@ -251,7 +251,7 @@ function Dashboard() {
         />
       </div>
     </div>
-    {flag && <VoiceChat roomId={roomId} username={username} isMuted={isMuted} />}
+    {/* {flag && <VoiceChat roomId={roomId} username={username} isMuted={isMuted} />} */}
     </>
   );
 }

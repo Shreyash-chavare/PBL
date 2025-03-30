@@ -11,9 +11,8 @@ html, body {
 
 .container {
     display: flex;
-    height: 100vh;
+    height: 88vh;
     background-color: #111111;
-    padding: 1rem;
     gap: 1.5rem; 
 }
 
@@ -22,7 +21,8 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    height: calc(100vh - 1rem); /* Account for container padding */
+    /* padding-right: 1rem; */
+    height: 100%; /* Account for container padding */
 }
 
 .compiler-section {
@@ -124,7 +124,7 @@ html, body {
 .room-members, .join-room-section {
     height: 30%;
     background: #111111;
-    padding: 1rem;
+    /* padding: 1rem; */
     border-radius: 0.5rem;
     overflow: auto;
 }
@@ -135,7 +135,7 @@ html, body {
     display: flex;
     flex-direction: column;
     background: #111111;
-    padding: 1rem;
+    /* padding: 1rem; */
     border-radius: 0.5rem;
     overflow: hidden; /* Hide overflow initially */
 }
@@ -144,15 +144,23 @@ html, body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 1rem;
+    /* padding-bottom: 1rem; */
     border-bottom: 1px solid #4a4a4a;
+}
+
+.no-content{
+  display: none;
+}
+
+.fullroom{
+  height: 100%;
 }
 
 .roomjoin{
   border-right: 1px solid #222; /* Subtle border */
   border-bottom: 1px solid #222; /* Subtle border */
   width: 100%;
-  padding: 20px;
+  /* padding: 20px; */
   display: flex;
   height: 25%;
   flex-direction: column;
