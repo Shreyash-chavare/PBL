@@ -75,6 +75,7 @@ const io = new Server(server, {
 
 const roomMembers = new Map();
 const activeConnections = new Set();
+const voiceRooms = new Map();
 io.on('connection', (socket) => {
     let currentroom = null;
     const socketID = socket.id;
@@ -134,7 +135,49 @@ io.on('connection', (socket) => {
 
     socket.on("problem-update", (data)=>{
         socket.to(data.room).emit("problem-update", data.problemInfo)
-    })
+    });
+
+     // WebRTC Voice Chat Handlers
+    socket.on("join-voice-room", ({ roomId, username }) => {
+        socket.join(`voice-${roomId}`);
+        if (!voiceRooms.has(roomId)) {
+            voiceRooms.set(roomId, new Set());
+        }
+        voiceRooms.get(roomId).add(socketID);
+        
+        // Notify others in the room
+        socket.to(`voice-${roomId}`).emit("user-joined-voice", {
+            signal: null,
+            callerID: socketID,
+            callerUsername: username
+        });
+    });
+
+    socket.on("sending-signal", ({ userToSignal, callerID, signal }) => {
+        io.to(userToSignal).emit("user-joined-voice", {
+            signal,
+            callerID,
+            callerUsername: socket.username
+        });
+    });
+
+    socket.on("returning-signal", ({ signal, callerID }) => {
+        io.to(callerID).emit("receiving-returned-signal", {
+            signal,
+            id: socketID
+        });
+    });
+
+    socket.on("leave-voice-room", ({ roomId, username }) => {
+        socket.leave(`voice-${roomId}`);
+        if (voiceRooms.has(roomId)) {
+            voiceRooms.get(roomId).delete(socketID);
+            if (voiceRooms.get(roomId).size === 0) {
+                voiceRooms.delete(roomId);
+            }
+        }
+    });
+
 
     // Handle errors
     socket.on('error', (error) => {

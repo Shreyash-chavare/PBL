@@ -1,8 +1,9 @@
 import React, { createContext, useEffect, useState, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './App.css';
-import { LogIn } from 'lucide-react';
+import { LogIn,Mic, MicOff  } from 'lucide-react';
 import OnlineCompiler from '../Home/components/online_compiler';
+import VoiceChat from '../Home/components/VoiceChat';
 import { io } from 'socket.io-client';
 
 function Dashboard() {
@@ -12,6 +13,7 @@ function Dashboard() {
   const [flag, setFlag] = useState(false);
   const [roomMembers, setRoomMembers] = useState([]); // State to hold room members
   const [username, setUsername] = useState("");
+  const [isMuted, setIsMuted] = useState(true); // Set initial state to true (muted)
   const socketRef = useRef(null);
   const location = useLocation();
   const problemData = location.state;
@@ -135,6 +137,7 @@ function Dashboard() {
         setUsername(data.username);
         setRoomId(inputRoomId);
         setFlag(true);
+        setIsMuted(true); // Ensure user starts muted when joining
         setInputRoomId("");
         console.log(`Got username: ${data.username}`);
 
@@ -163,17 +166,30 @@ function Dashboard() {
       setFlag(false);
       setRoomId("");
       setRoomMembers([]);
+      setIsMuted(true); // Reset to muted state when leaving
     }
   };
 
   return (
+    <>
     <div className="container">
       <div className='problem-section'>
         {flag ? (
           <div className="room-members bg-[#111111] p-4 rounded-lg mb-4">
-            <div className="squad-name mb-4">
-              <h1 className="text-xl font-bold text-[#d1d0c5]">Squad</h1>
-            </div>
+            <div className="squad-header">
+                <div className="squad-name">
+                  <h1 className="mr-8"> Squad </h1>
+                </div>
+                <div className="voice-controls ml-auto">
+                  <button 
+                    onClick={() => setIsMuted(!isMuted)}
+                    className={`voice-button ${isMuted ? 'muted' : ''} text-white`}
+                    title={isMuted ? "Unmute" : "Mute"}
+                  >
+                    {isMuted ?<MicOff size={20} className="text-white" />:<Mic size={20} className="text-white" />}
+                  </button>
+                </div>
+              </div>
             <div className="player-box bg-[#1a1a1a] rounded-lg p-3">
               <div className="player-details">
                 <div className="player space-y-2">
@@ -235,6 +251,8 @@ function Dashboard() {
         />
       </div>
     </div>
+    {flag && <VoiceChat roomId={roomId} username={username} isMuted={isMuted} />}
+    </>
   );
 }
 
