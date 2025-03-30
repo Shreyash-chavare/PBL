@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "./problems.css"; 
+import { useNavigate } from 'react-router-dom';
 const LeetCodeProblems = () => {
     const [problemlist, setProblemlist] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -8,10 +9,56 @@ const LeetCodeProblems = () => {
     const [selectedProblem, setSelectedProblem] = useState(null);
     const [searchLoading, setSearchLoading] = useState(false);
     const [expandedProblemId, setExpandedProblemId] = useState(null);
+    const navigate = useNavigate();
 
     const convertHtmlToPlainText = (html) => {
-        const doc = new DOMParser().parseFromString(html, 'text/html');
-        return doc.body.textContent || "";
+        // Create a temporary div to handle HTML content
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        // Replace specific HTML elements with formatted text
+        const formatText = (node) => {
+            let result = '';
+            node.childNodes.forEach(child => {
+                if (child.nodeType === 3) { // Text node
+                    result += child.textContent;
+                } else if (child.nodeType === 1) { // Element node
+                    let content = formatText(child);
+                    switch (child.tagName.toLowerCase()) {
+                        case 'p':
+                            result += `\n${content}\n`;
+                            break;
+                        case 'br':
+                            result += '\n';
+                            break;
+                        case 'ul':
+                            result += '\n' + content;
+                            break;
+                        case 'li':
+                            result += `\n• ${content}`;
+                            break;
+                        case 'strong':
+                        case 'b':
+                            result += `*${content}*`;
+                            break;
+                        case 'code':
+                            result += `\`${content}\``;
+                            break;
+                        case 'pre':
+                            result += `\n\`\`\`\n${content}\n\`\`\`\n`;
+                            break;
+                        default:
+                            result += content;
+                    }
+                }
+            });
+            return result;
+        };
+
+        return formatText(tempDiv)
+            .trim()
+            .replace(/\n\s*\n/g, '\n\n') // Remove extra blank lines
+            .replace(/\n\n\n+/g, '\n\n'); // Limit consecutive newlines
     };
 
     useEffect(() => {
@@ -73,6 +120,19 @@ const LeetCodeProblems = () => {
         }
     };
 
+    const handleOpenProblem = (problem) =>{
+        console.log(problem)
+        navigate('/app', {
+            state: {
+                problemId: problem.questionFrontendId,
+                title: problem.title,
+                content: convertHtmlToPlainText(problem.content),
+                topicTags: problem.topicTags,
+                difficulty: problem.difficulty,
+            }
+        })
+    }
+
     const handleProblemClick = async (problemId) => {
         if (expandedProblemId === problemId) {
             setExpandedProblemId(null);
@@ -105,109 +165,89 @@ const LeetCodeProblems = () => {
     if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
 
     return (
-        <div className="problem-container">
-            <div className="problem-section">
-                <h2 className="section-title">Search Problem</h2>
-                <div className="search-container">
-                    <input
-                        type="text"
-                        value={questionId}
-                        onChange={(e) => setQuestionId(e.target.value)}
-                        placeholder="Enter question ID"
-                        className="search-input"
-                    />
-                    <button
-                        onClick={handleSearchQuestion}
-                        disabled={searchLoading}
-                        className="search-button"
-                    >
-                        {searchLoading ? 'Searching...' : 'Search'}
-                    </button>
+        <div className="p-6">
+            <div className="space-y-6">
+                {/* Search Section */}
+                <div className="bg-[#111111] p-4 rounded-lg">
+                    <h2 className="text-xl font-bold text-[#d1d0c5] mb-4">Search Problem</h2>
+                    <div className="flex gap-2">
+                        <input
+                            type="text"
+                            value={questionId}
+                            onChange={(e) => setQuestionId(e.target.value)}
+                            placeholder="Enter question ID"
+                            className="flex-1 p-2 rounded bg-[#1a1a1a] text-[#d1d0c5] border border-gray-700"
+                        />
+                        <button
+                            onClick={handleSearchQuestion}
+                            disabled={searchLoading}
+                            className="px-4 py-2 bg-[#1a1a1a] text-[#d1d0c5] rounded hover:bg-[#2a2a2a] transition-colors border border-gray-700"
+                        >
+                            {searchLoading ? 'Searching...' : 'Search'}
+                        </button>
+                    </div>
                 </div>
 
-                {selectedProblem && (
-                    <div className="expanded-content">
-                        <h3 className="section-title">{selectedProblem.title}</h3>
-                        <div>
-                            <p>
-                                <span className="font-medium">Difficulty: </span>
-                                <span className={`difficulty-badge difficulty-${selectedProblem.difficulty.toLowerCase()}`}>
-                                    {selectedProblem.difficulty}
-                                </span>
-                            </p>
-                            <p><span className="font-medium">Success Rate: </span>{selectedProblem.acRate?.toFixed(1)}%</p>
-                            
-                            <div>
-                                <span className="font-medium">Topics: </span>
-                                <div className="flex flex-wrap gap-2 mt-1">
-                                    {selectedProblem.topicTags.map((tag) => (
-                                        <span key={tag.name} className="topic-tag">
-                                            {tag.name}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            <div className="problem-section">
-                <h2 className="section-title">All Problems</h2>
-                {problemlist.length > 0 ? (
+                {/* Problems List */}
+                <div className="bg-[#111111] p-4 rounded-lg">
+                    <h2 className="text-xl font-bold text-[#d1d0c5] mb-4">All Problems</h2>
                     <div className="space-y-2">
                         {problemlist.map(problem => (
                             <div key={problem.questionFrontendId}>
                                 <div 
                                     onClick={() => handleProblemClick(problem.questionFrontendId)}
-                                    className="problem-card"
+                                    className="p-3 border border-gray-700 rounded bg-[#1a1a1a] hover:bg-[#2a2a2a] cursor-pointer transition-colors"
                                 >
-                                    <div className="problem-header">
+                                    <div className="flex justify-between items-center">
                                         <div>
                                             <span className="font-medium">{problem.questionFrontendId}. </span>
                                             {problem.title}
                                         </div>
-                                        <span className={`difficulty-badge difficulty-${problem.difficulty.toLowerCase()}`}>
+                                        <span className={`ml-2 px-2 py-1 rounded text-sm ${
+                                            problem.difficulty === 'Easy' ? 'bg-green-900 text-green-100' :
+                                            problem.difficulty === 'Medium' ? 'bg-yellow-900 text-yellow-100' :
+                                            'bg-red-900 text-red-100'
+                                        }`}>
                                             {problem.difficulty}
                                         </span>
                                     </div>
                                 </div>
                                 
                                 {expandedProblemId === problem.questionFrontendId && selectedProblem && (
-                                    <div className="expanded-content">
+                                    <div className="mt-2 ml-4 p-4 border-l-2 border-gray-700 bg-[#1a1a1a] rounded">
                                         <div className="space-y-4">
-                                            <div className='flex justify-between'>
-                                                <div>
-                                                    <h3 className="section-title">{selectedProblem.title}</h3>
-                                                    <div className="problem-content">
+                                            <div className="flex justify-between items-start">
+                                                <div className="space-y-2">
+                                                    <h3 className="text-lg font-semibold text-[#d1d0c5]">{selectedProblem.title}</h3>
+                                                    <div className="text-[#d1d0c5] font-mono whitespace-pre-wrap">
                                                         {convertHtmlToPlainText(selectedProblem.content)}
                                                     </div>
                                                 </div>
-                                                <button className="open-problem-btn">
+                                                <button 
+                                                    onClick={() => handleOpenProblem(selectedProblem)}
+                                                    className="px-4 py-2 bg-[#2a2a2a] text-[#d1d0c5] rounded hover:bg-[#3a3a3a] transition-colors border border-gray-700"
+                                                >
                                                     Open Problem
                                                 </button>
                                             </div>
-                                            <div className="">
+                                            <div className="flex flex-col gap-4">
                                                 <div>
                                                     <p className="text-sm text-gray-400">Success Rate</p>
-                                                    <p className="font-medium">{selectedProblem.acRate?.toFixed(1)}%</p>
+                                                    {console.log(selectedProblem.stats.totalSubmission)}
+                                                    <p className="text-[#d1d0c5]">{JSON.parse(selectedProblem.stats).acRate}%</p>
                                                 </div>
                                                 <div>
-                                   
-                                                </div>
-                                            </div>
-                                            
-                                            <div>
-                                                <p className="text-sm text-gray-400 mb-2">Topics</p>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {selectedProblem.topicTags.map((tag) => (
-                                                        <span 
-                                                            key={tag.name}
-                                                            className="topic-tag"
-                                                        >
-                                                            {tag.name}
-                                                        </span>
-                                                    ))}
+                                                    <p className="text-sm text-gray-400">Topics</p>
+                                                    <div className="flex flex-wrap gap-2 mt-1">
+                                                        {selectedProblem.topicTags.map((tag) => (
+                                                            <span 
+                                                                key={tag.name}
+                                                                className="px-2 py-1 bg-[#111111] text-[#d1d0c5] text-sm rounded border border-gray-700"
+                                                            >
+                                                                {tag.name}
+                                                            </span>
+                                                        ))}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -216,9 +256,7 @@ const LeetCodeProblems = () => {
                             </div>
                         ))}
                     </div>
-                ) : (
-                    <p className="text-gray-500">No problems available</p>
-                )}
+                </div>
             </div>
         </div>
     );

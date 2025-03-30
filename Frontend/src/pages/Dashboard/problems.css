@@ -1,3 +1,8 @@
+body {
+    background-color: #111111;
+    color: #d1d0c5;
+}
+
 .problem-container {
   padding: 1rem;
   gap: 1.5rem;
@@ -66,6 +71,8 @@
 .problem-card:hover {
   background-color: #1a1a1a;
   border-color: #6b7280;
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
 }
 
 .problem-header {
@@ -110,6 +117,7 @@
   max-height: 2000px;
   overflow: hidden;
   transform: scaleY(1);
+  animation: expand 0.3s ease-out;
 }
 
 .expanded-content.collapsed {
@@ -122,6 +130,17 @@
   transform: scaleY(0);
 }
 
+@keyframes expand {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .topic-tag {
   background-color: #111111;
   color: #d1d0c5;
@@ -132,11 +151,17 @@
 }
 
 .problem-content {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 1200px; /* Adjust based on your layout */
+    white-space: pre-wrap;
+    line-height: 1.6;
     color: #d1d0c5;
+    font-size: 0.95rem;
+}
+
+.problem-content code {
+    background-color: #2a2a2a;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
 }
 
 .open-problem-btn {

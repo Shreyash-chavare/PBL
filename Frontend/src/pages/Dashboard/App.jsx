@@ -1,145 +1,241 @@
 import React, { createContext, useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './App.css';
 import { LogIn } from 'lucide-react';
 import OnlineCompiler from '../Home/components/online_compiler';
 import { io } from 'socket.io-client';
 
 function Dashboard() {
-    const [reviewData, setReviewData] = useState(""); // State to hold review data
-    const [roomId, setRoomId] = useState(""); // State to hold room ID
-    const [inputRoomId, setInputRoomId] = useState(""); // New state for input value
-    const [flag, setFlag] = useState(false)
-    const [roomMembers, setRoomMembers] = useState([]); // State to hold room members
-    const [username, setUsername] = useState("");
-    const socketRef = useRef(null);
-    
-    
-    
-    useEffect(() => {
-      socketRef.current = io("http://localhost:3000")
-        socketRef.current.on("members-update", (members) => {
-          console.log("members", members)
-          setRoomMembers( members);
-          // console.log(membersembers)
-        });
-    }, []);
+  const [reviewData, setReviewData] = useState(""); // State to hold review data
+  const [roomId, setRoomId] = useState(""); // State to hold room ID
+  const [inputRoomId, setInputRoomId] = useState(""); // New state for input value
+  const [flag, setFlag] = useState(false);
+  const [roomMembers, setRoomMembers] = useState([]); // State to hold room members
+  const [username, setUsername] = useState("");
+  const socketRef = useRef(null);
+  const location = useLocation();
+  const problemData = location.state;
+  const [problemTitle, setProblemTitle] = useState("");
+  const [problemContent, setProblemContent] = useState("");
+  const [problemId, setProblemId] = useState("");
+  const [difficulty, setDifficulty] = useState("");
 
-    const handleJoinRoom = async () => {
-        if (!inputRoomId.trim()) return;
-        try {
-            const response = await fetch(`http://localhost:3000/getUsername`, {
-                method: "GET",
-                credentials: "include",
-                headers: {
-                    "Accept": "application/json"
-                }
-            });
+  const convertHtmlToPlainText = (html) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
 
-            const data = await response.json();
-            
-            if (response.ok) {
-              setUsername(data.username);
-              setRoomId(inputRoomId);
-              setFlag(true);
-              setInputRoomId("");
-              console.log(`Got username: ${data.username}`);
-
-              socketRef.current.emit("join-room", inputRoomId);
-
-              socketRef.current.emit("add-member", {
-                room: inputRoomId,
-                username: data.username
-              });
-
-                // console.log("members", roomMembers)
-            } else {
-                console.error("Failed to get username:", data.message);
-            }
-        } catch (error) {
-            console.error("Error fetching username:", error);
+    const formatText = (node) => {
+      let result = '';
+      node.childNodes.forEach(child => {
+        if (child.nodeType === 3) { // Text node
+          result += child.textContent;
+        } else if (child.nodeType === 1) { // Element node
+          let content = formatText(child);
+          switch (child.tagName.toLowerCase()) {
+            case 'p':
+              result += `\n${content}\n`;
+              break;
+            case 'br':
+              result += '\n';
+              break;
+            case 'ul':
+              result += '\n' + content;
+              break;
+            case 'li':
+              result += `\n• ${content}`;
+              break;
+            case 'strong':
+            case 'b':
+              result += `*${content}*`;
+              break;
+            case 'code':
+              result += `\`${content}\``;
+              break;
+            case 'pre':
+              result += `\n\`\`\`\n${content}\n\`\`\`\n`;
+              break;
+            default:
+              result += content;
+          }
         }
+      });
+      return result;
     };
 
-    const handleLeave = () =>{
-      if(socketRef.current) {
-        socketRef.current.emit("leave-room");
-        
-        socketRef.current.emit("remove-member", {
-          room: roomId,
-          username: username
-        });
-        setFlag(false);
-        setRoomId("");
-        setRoomMembers([])
-      }
+    return formatText(tempDiv)
+      .trim()
+      .replace(/\n\s*\n/g, '\n\n')
+      .replace(/\n\n\n+/g, '\n\n');
+  };
+
+  useEffect(() => {
+    if (problemData) {
+      setProblemTitle(problemData.title);
+      setProblemContent(problemData.content);
+      setDifficulty(problemData.difficulty);
+      setProblemId(problemData.problemId);
     }
+  }, [problemData]);
 
-    return (
-      <>
-        <div className="container w-1 pt">
-          <div className='w-2/5'>
+  useEffect(() => {
+    socketRef.current = io("http://localhost:3000");
+    socketRef.current.on("members-update", (members) => {
+      console.log("members", members);
+      setRoomMembers(members);
+    });
 
-          {flag ? (
-            <div className="room-members">
-              <div className="squad-name">
-                <h1> Squad </h1>
-              </div>
-              <div className="player-box">
-                <div className="player-details">
-                  <div className="player">
-                    {roomMembers.map((member) => {
-                      return <h2 key={member}>{member}</h2>;
-                    })}
-                  </div>
+    socketRef.current.on("problem-update", (problemInfo) => {
+      setProblemTitle(problemInfo.title)
+      setProblemContent(problemInfo.content)
+      setDifficulty(problemInfo.difficulty)
+      setProblemId(problemInfo.problemId)
+    })
+  }, []);
+
+  useEffect(() => {
+    if (problemData && roomId) {
+      setProblemTitle(problemData.title);
+      setProblemContent(problemData.content);
+      setDifficulty(problemData.difficulty);
+      setProblemId(problemData.problemId);
+
+
+    }
+  }, [problemData])
+
+  useEffect(() => {
+    if (problemData) {
+      socketRef.current?.emit("problem-update", {
+        room: roomId,
+        problemInfo: {
+          title: problemData.title,
+          content: problemData.content,
+          difficulty: problemData.difficulty,
+          problemId: problemData.problemId
+        }
+
+      });
+    }
+  }, [roomMembers])
+
+  const handleJoinRoom = async () => {
+    if (!inputRoomId.trim()) return;
+    try {
+      const response = await fetch(`http://localhost:3000/getUsername`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Accept": "application/json"
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUsername(data.username);
+        setRoomId(inputRoomId);
+        setFlag(true);
+        setInputRoomId("");
+        console.log(`Got username: ${data.username}`);
+
+        socketRef.current.emit("join-room", inputRoomId);
+
+        socketRef.current.emit("add-member", {
+          room: inputRoomId,
+          username: data.username
+        });
+      } else {
+        console.error("Failed to get username:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching username:", error);
+    }
+  };
+
+  const handleLeave = () => {
+    if (socketRef.current) {
+      socketRef.current.emit("leave-room");
+
+      socketRef.current.emit("remove-member", {
+        room: roomId,
+        username: username
+      });
+      setFlag(false);
+      setRoomId("");
+      setRoomMembers([]);
+    }
+  };
+
+  return (
+    <div className="container">
+      <div className='problem-section'>
+        {flag ? (
+          <div className="room-members bg-[#111111] p-4 rounded-lg mb-4">
+            <div className="squad-name mb-4">
+              <h1 className="text-xl font-bold text-[#d1d0c5]">Squad</h1>
+            </div>
+            <div className="player-box bg-[#1a1a1a] rounded-lg p-3">
+              <div className="player-details">
+                <div className="player space-y-2">
+                  {roomMembers.map((member) => (
+                    <h2 key={member} className="text-[#d1d0c5]">{member}</h2>
+                  ))}
                 </div>
               </div>
-
-              <div className="room-detail">
-                <h3> Room ID: {roomId}</h3>
-                <button onClick={handleLeave} className="leave-button">
-                  {" "}
-                  Leave{" "}
-                </button>
-              </div>
             </div>
-          ) : (
-            <div className="space-y-2 bg-[#111111] w-full h-1/3 roomjoin">
-              <label className="text-sm text-gray-300">Join Room</label>
-              <div className="flex">
-                <input
-                  type="text"
-                  placeholder="Enter Room ID"
-                  className="flex-1 p-2 rounded-l text-white bg-[#1a1a1a]  border-gray-700 placeholder-gray-500 outline-none focus:ring-0"
-                  value={inputRoomId}
-                  onChange={(e) => setInputRoomId(e.target.value)}
-                  />
-                <button
-                  className="bg-[#1a1a1a] text-[#d1d0c5] p-2 rounded-r hover:bg-[#111111] border-gray-700 transition-colors duration-200"
-                  onClick={handleJoinRoom}
-                >
-                  <LogIn size={16} />
-                </button>
-              </div>
+            <div className="room-detail mt-4 flex justify-between items-center">
+              <h3 className="text-[#d1d0c5]">Room ID: {roomId}</h3>
+              <button onClick={handleLeave} className="leave-button">Leave</button>
             </div>
-          )}
-
-          <div className='w-full h-2/3'>
-            <h2>Problem Statment</h2>
           </div>
-
+        ) : (
+          <div className="join-room-section bg-[#111111] p-4 rounded-lg mb-4">
+            <label className="text-sm text-gray-300">Join Room</label>
+            <div className="flex mt-2">
+              <input
+                type="text"
+                placeholder="Enter Room ID"
+                className="flex-1 p-2 rounded-l bg-[#1a1a1a] text-[#d1d0c5]"
+                value={inputRoomId}
+                onChange={(e) => setInputRoomId(e.target.value)}
+              />
+              <button
+                className="join-button"
+                onClick={handleJoinRoom}
+              >
+                <LogIn size={16} />
+              </button>
+            </div>
           </div>
-          <div className="compiler-setup">
-            <OnlineCompiler
-              setParentReview={setReviewData}
-              room={roomId}
-              setFlag={setFlag}
-              flag={flag}
-            />
+        )}
+
+        <div className="problem-content-section">
+          <h2 className="section-title">Problem Statement</h2>
+          <div className="problem-header">
+            <div className="flex items-center gap-2">
+              <span className="text-[#d1d0c5]">{problemId}.</span>
+              <h2 className="text-[#d1d0c5] font-medium">{problemTitle}</h2>
+            </div>
+            <span className={`difficulty-badge difficulty-${difficulty?.toLowerCase()}`}>
+              {difficulty}
+            </span>
+          </div>
+          <div className="problem-description">
+            {convertHtmlToPlainText(problemContent)}
           </div>
         </div>
-      </>
-    );
+      </div>
+
+      <div className="compiler-section">
+        <OnlineCompiler
+          setParentReview={setReviewData}
+          room={roomId}
+          setFlag={setFlag}
+          flag={flag}
+        />
+      </div>
+    </div>
+  );
 }
 
 export default Dashboard;

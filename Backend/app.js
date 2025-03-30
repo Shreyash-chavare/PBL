@@ -132,6 +132,10 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on("problem-update", (data)=>{
+        socket.to(data.room).emit("problem-update", data.problemInfo)
+    })
+
     // Handle errors
     socket.on('error', (error) => {
         console.error('Socket error:', error);
@@ -237,7 +241,6 @@ app.get('/api/leetcode/problem/:id', async (req, res) => {
         const problemlist = await leetcode.problems();
         const selected_problem1 = problemlist.questions.find(p => p.questionFrontendId === req.params.id.slice(1));
         const selected_problem = await leetcode.problem(selected_problem1.titleSlug);
-        console.log(selected_problem)
         if (!selected_problem) {
             return res.status(404).json({ error: 'Problem not found' });
         }
