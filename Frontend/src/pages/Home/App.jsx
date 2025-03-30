@@ -39,13 +39,13 @@ function App() {
       <Routes>
         <Route path="/" element={<Fat />} />
         <Route path="/practice" element={<JDoodleCompiler />} />
-        <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/"/>} />  
-        <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/"/>} />  
+        <Route path="/login" element={!authUser ? <Login /> : <Navigate to="/profile"/>} />  
+        <Route path="/signup" element={!authUser ? <Signup /> : <Navigate to="/profile"/>} />  
         <Route path="/app" element={authUser ? <Dashboard /> : <Navigate to="/login"/>} />
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login"/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/problems" element={<LeetCodeProblems />} />
+        <Route path="/problems" element={authUser ? <LeetCodeProblems /> : <Navigate to="/login"/>} />
       </Routes>
       <Toaster position="top-center" richColors closeButton />
     </div>

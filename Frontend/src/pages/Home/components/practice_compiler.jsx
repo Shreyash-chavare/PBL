@@ -1,12 +1,24 @@
 import React, { useState } from "react";
 import './index.css'; // Ensure you have this import to apply Tailwind CSS
 import './compiler.css';
+import { useLocation } from "react-router-dom";
 
 const JDoodleCompiler = () => {
-    const [language, setLanguage] = useState("python3");
+    const location = useLocation();
+    const lang = location.state;
+    
+    // Map profile page language IDs to compiler language IDs
+    const languageMap = {
+        'python': 'python3',
+        'java': 'java',
+        'cpp': 'cpp',
+        'c': 'c'
+    };
+
     const [code, setCode] = useState("");
     const [input, setInput] = useState("");
     const [output, setOutput] = useState("");
+    const [language, setLanguage] = useState(languageMap[lang.setlang] || 'python3');
 
     const handleRunCode = async () => {
         setOutput("Running...");
@@ -37,17 +49,16 @@ const JDoodleCompiler = () => {
     };
 
     return (
-        <div className="flex flex-col items-center h-fill bg-gray-100 p-4">
-            <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-6xl">
-                <h1 className="text-4xl font-bold mb-6 text-center">JDoodle Compiler</h1>
-
-                <div className="flex flex-col lg:flex-row gap-6 mb-6">
-                    <div className="w-full lg:w-1/4">
-                        <label className="block text-left mb-2 text-lg font-medium">Language:</label>
+        <div className="h-5/6 bg-[#111111] p-8">
+            <div className="max-w-6xl mx-auto">
+                <div className="mb-8 flex items-center">
+                    <h1 className="text-2xl font-bold text-[#d1d0c5]">Practice Mode</h1>
+                    <div className="ml-4">
                         <select
-                            className="block w-full p-3 border border-gray-300 rounded-lg text-lg"
+                            className="bg-[#2a2a2a] text-[#d1d0c5] px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-gray-600"
                             value={language}
                             onChange={(e) => setLanguage(e.target.value)}
+                            disabled
                         >
                             <option value="python3">Python</option>
                             <option value="java">Java</option>
@@ -55,36 +66,45 @@ const JDoodleCompiler = () => {
                             <option value="cpp">C++</option>
                         </select>
                     </div>
-                    <div className="w-full lg:w-3/4 relative">
-                        <label className="block text-left mb-2 text-lg font-medium">Code:</label>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Code Editor */}
+                    <div className="lg:col-span-2">
+                        <label className="block text-[#d1d0c5] mb-2 text-sm">Code Editor</label>
                         <textarea
-                            className="block w-full h-64 p-2 border border-gray-300 rounded-lg resize-none text-lg"
+                            className="w-full h-[400px] bg-[#1a1a1a] text-[#d1d0c5] p-4 rounded border border-gray-700 focus:outline-none focus:border-gray-600 font-mono resize-none"
                             placeholder="Write your code here..."
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
                         ></textarea>
+                    </div>
+
+                    {/* Input/Output Section */}
+                    <div className="space-y-6">
+                        <div>
+                            <label className="block text-[#d1d0c5] mb-2 text-sm">Input (Optional)</label>
+                            <textarea
+                                className="w-full h-[150px] bg-[#1a1a1a] text-[#d1d0c5] p-4 rounded border border-gray-700 focus:outline-none focus:border-gray-600 font-mono resize-none"
+                                placeholder="Enter input here..."
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                            ></textarea>
+                        </div>
+
+                        <div>
+                            <label className="block text-[#d1d0c5] mb-2 text-sm">Output</label>
+                            <pre className="w-full h-[150px] bg-[#1a1a1a] text-[#d1d0c5] p-4 rounded border border-gray-700 overflow-auto font-mono">
+                                {output || 'Output will appear here...'}
+                            </pre>
+                        </div>
+
                         <button
                             onClick={handleRunCode}
-                            className="run-button"            
-                        >                               {/* absolute top-13 right-0 mt-2 rounded-lg font-semibold text-md */}
+                            className="w-full bg-[#2a2a2a] hover:bg-[#3a3a3a] text-[#d1d0c5] py-3 px-6 rounded flex items-center justify-center transition-colors border border-gray-700"
+                        >
                             Run Code
                         </button>
-                    </div>
-                </div>
-
-                <div className="flex flex-col lg:flex-row gap-6 mb-6"> {/* i/o box */}
-                    <div className="w-full lg:w-1/2">
-                        <label className="block text-left mb-2 text-lg font-medium">Input (Optional):</label>
-                        <textarea
-                            className="block w-full h-24 p-4 border border-gray-300 rounded-lg resize-none text-lg"
-                            placeholder="Input (Optional)"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                        ></textarea>
-                    </div>
-                    <div className="w-full lg:w-1/2">
-                        <label className="block text-left mb-2 text-lg font-medium">Output:</label>
-                        <pre className="bg-gray-200 p-4 text-red-600 rounded-lg text-lg h-24 overflow-x-auto">{output}</pre>
                     </div>
                 </div>
             </div>

@@ -42,7 +42,7 @@ const Login = () => {
               color: 'white',
             }
           });
-          navigate('/app');
+          navigate('/profile');
         } else {
           toast.error(res.data.message || 'Login failed');
         }
