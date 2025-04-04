@@ -9,6 +9,13 @@ const Navbar = () => {
     const location = useLocation();
     const { logout } = useAuthstore();
 
+    const langmap = new Map();
+    langmap.set("Py", "python")
+    langmap.set("C++", "cpp")
+    langmap.set("C", "c")
+    langmap.set("Ja", "java")
+
+
     const handleLogout = async () => {
         try {
             const result = await logout();
@@ -24,13 +31,25 @@ const Navbar = () => {
         }
     };
 
+    const handleLang = (e) =>{
+        const textlang = e.currentTarget.querySelector("span").innerText
+        const langId = langmap.get(textlang)
+        navigate('/practice', { state:{
+            setlang: langId
+          }})
+    }
+
+    const handleCodeSquad = () => {
+        navigate('/');
+    }
+
     // Only show settings on home page
     const showSettings = location.pathname === '/app';
 
     return (
         <nav className='sticky top-0 z-50 w-full bg-[#111111] shadow-md'>
         <div className='flex justify-between items-center px-6 py-4'>
-            <div className="title text-4xl font-bold text-[#e29a14]">
+            <div onClick={handleCodeSquad} className="title text-4xl font-bold text-[#e29a14] cursor-pointer">
                 CodeSquad
             </div>
             <div className="flex gap-6 items-center">
@@ -57,28 +76,28 @@ const Navbar = () => {
                     <div className="absolute right-0 top-full mt-1 w-52 rounded-lg shadow-lg bg-[#1a1a1a] ring-1 ring-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top scale-95 group-hover:scale-100">
                         <ul className="py-1 divide-y divide-gray-700">
                             <li className="group/item hover:bg-[#222222] transition-colors">
-                                <a href="#" className="px-3 py-2 flex items-center gap-2 w-full">
+                                <div onClick={handleLang} className="px-3 py-2 flex items-center gap-2 w-full cursor-pointer">
                                     <span className="w-8 h-8 rounded-lg bg-blue-800 flex items-center justify-center text-blue-400 font-mono text-sm">C++</span>
-                                    <span className="font-medium text-gray-300">C++ 11</span>
-                                </a>
+                                    <span className="font-medium text-gray-300">C++</span>
+                                </div>
                             </li>
                             <li className="group/item hover:bg-[#222222] transition-colors">
-                                <a href="#" className="px-3 py-2 flex items-center gap-2 w-full">
+                                <div onClick={handleLang} className="px-3 py-2 flex items-center gap-2 w-full cursor-pointer">
                                     <span className="w-8 h-8 rounded-lg bg-red-800 flex items-center justify-center text-red-400 font-mono text-sm">Ja</span>
                                     <span className="font-medium text-gray-300">Java</span>
-                                </a>
+                                </div>
                             </li>
                             <li className="group/item hover:bg-[#222222] transition-colors">
-                                <a href="#" className="px-3 py-2 flex items-center gap-2 w-full">
+                                <div onClick={handleLang} className="px-3 py-2 flex items-center gap-2 w-full cursor-pointer">
                                     <span className="w-8 h-8 rounded-lg bg-yellow-800 flex items-center justify-center text-yellow-400 font-mono text-sm">C</span>
                                     <span className="font-medium text-gray-300">C</span>
-                                </a>
+                                </div>
                             </li>
                             <li className="group/item hover:bg-[#222222] transition-colors">
-                                <a href="#" className="px-3 py-2 flex items-center gap-2 w-full">
+                                <div onClick={handleLang} className="px-3 py-2 flex items-center gap-2 w-full cursor-pointer">
                                     <span className="w-8 h-8 rounded-lg bg-red-800 flex items-center justify-center text-red-400 font-mono text-sm">Py</span>
                                     <span className="font-medium text-gray-300">Python</span>
-                                </a>
+                                </div>
                             </li>
                         </ul>
                     </div>

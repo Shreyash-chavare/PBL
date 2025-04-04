@@ -61,7 +61,6 @@ const JDoodleCompiler = () => {
                             className="bg-[#2a2a2a] text-[#d1d0c5] px-4 py-2 rounded border border-gray-700 focus:outline-none focus:border-gray-600"
                             value={language}
                             onChange={(e) => setLanguage(e.target.value)}
-                            disabled
                         >
                             <option value="python3">Python</option>
                             <option value="java">Java</option>

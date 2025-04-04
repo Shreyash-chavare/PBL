@@ -8,6 +8,8 @@ const Profile = () => {
   const [roomId, setRoomId] = useState('');
   const [newRoomName, setNewRoomName] = useState('');
   const {authUser}= useAuthstore();
+
+
   
   console.log('AuthUser in Profile:', authUser); // Debug log
   const navigate = useNavigate();
@@ -171,8 +173,12 @@ const Profile = () => {
               {/* Day labels */}
               <div className="mr-2 mt-6">
                 <div className="text-xs text-gray-400 h-3 mb-1">Mon</div>
+                <div className="text-xs text-gray-400 h-3 mb-1">Tue</div>
                 <div className="text-xs text-gray-400 h-3 mb-1">Wed</div>
+                <div className="text-xs text-gray-400 h-3 mb-1">Thu</div>
                 <div className="text-xs text-gray-400 h-3 mb-1">Fri</div>
+                <div className="text-xs text-gray-400 h-3 mb-1">Sat</div>
+                <div className="text-xs text-gray-400 h-3 mb-1">Sun</div>
               </div>
               
               {/* Calendar grid */}
