@@ -11,6 +11,8 @@ import isLoggedIn from './middleware/isloggedin.js';
 import dotenv from 'dotenv';
 import { Server } from "socket.io";
 import { LeetCode } from 'leetcode-query';
+import UserActivity from '../Backend/models/userActivity.js'; // Import the UserActivity model
+
 
 
 
@@ -245,6 +247,44 @@ app.post("/api/compile", async (req, res) => {
 
 // })
 
+
+app.get('/api/user/activity', isLoggedIn, async (req, res) => {
+    try {
+      // Get user ID from session
+      const userId = req.session.user.id;
+      
+      // Calculate date one year ago
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+      
+      // Query activities within the last year
+      const activities = await UserActivity.find({
+        userId: userId,
+        date: { $gte: oneYearAgo }
+      }).select('date -_id');
+      
+      // Group by date
+      const groupedActivities = activities.reduce((acc, activity) => {
+        // Format date as YYYY-MM-DD
+        const date = new Date(activity.date).toISOString().split('T')[0];
+        
+        // Increment count for this date or initialize to 1
+        acc[date] = (acc[date] || 0) + 1;
+        return acc;
+      }, {});
+      
+      // Convert to array format expected by frontend
+      const activityData = Object.keys(groupedActivities).map(date => ({
+        date,
+        count: groupedActivities[date]
+      }));
+      
+      res.json(activityData);
+    } catch (error) {
+      console.error('Error fetching user activity:', error);
+      res.status(500).json({ error: 'Failed to fetch activity data' });
+    }
+  });
 
 
 // Add before server.listen()

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, User, Mail, Plus, LogIn, Code, Users } from 'lucide-react';
 import { useAuthstore } from '../../stores/auth';
 import { useNavigate } from 'react-router-dom';
@@ -7,9 +7,11 @@ import "./App.css"
 const Profile = () => {
   const [roomId, setRoomId] = useState('');
   const [newRoomName, setNewRoomName] = useState('');
-  const {authUser}= useAuthstore();
-
-
+  const { authUser } = useAuthstore();
+  const [activityData, setActivityData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [daysActive, setDaysActive] = useState(0);
   
   console.log('AuthUser in Profile:', authUser); // Debug log
   const navigate = useNavigate();
@@ -25,13 +27,43 @@ const Profile = () => {
     { id: 'c', name: 'C', icon: '🔧' },
   ];
 
-  // Sample user data
+  // Fetch user activity data
+  useEffect(() => {
+    const fetchActivityData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('http://localhost:3000/api/user/activity', {
+          credentials: 'include', // Important for cookies/session
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch activity data');
+        }
+        
+        const data = await response.json();
+        console.log(data)
+        setActivityData(data);
+        
+        // Calculate days active
+        setDaysActive(new Set(data.map(item => item.date)).size);
+      } catch (err) {
+        console.error('Error fetching activity data:', err);
+        setError(err.message);
+        // Fall back to sample data if API fails
+        setActivityData(generateSampleActivityData());
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchActivityData();
+  }, []);
+
+  // Sample user data with real or fallback activity data
   const userData = {
     username: authUser?.name || 'Not Available',
     email: authUser?.email || 'Not Available',
     profileImage: '/api/placeholder/150/150',
-    // Sample activity data (representing a year of activity)
-    activityData: generateSampleActivityData()
   };
 
   function generateSampleActivityData() {
@@ -65,25 +97,61 @@ const Profile = () => {
     navigate("/problems");
   };
 
+  // Function to fill in missing dates with zero counts
+  const fillMissingDates = (data) => {
+    const filledData = [...data];
+    const dateSet = new Set(data.map(item => item.date));
+    
+    const today = new Date();
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(today.getFullYear() - 1);
+    
+    // Iterate through each day in the last year
+    for (let d = new Date(oneYearAgo); d <= today; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+      if (!dateSet.has(dateStr)) {
+        filledData.push({ date: dateStr, count: 0 });
+      }
+    }
+    
+    // Sort by date
+    return filledData.sort((a, b) => new Date(a.date) - new Date(b.date));
+  };
+
   // Function to group activity data by week
   const getCalendarData = () => {
+    // Make sure we have data for every day
+    const completeData = fillMissingDates(activityData);
+    
     const weeks = [];
+    let dayIndex = 0;
+    
+    // Get today's day of week (0 = Sunday, 6 = Saturday)
+    const today = new Date();
+    const todayDayOfWeek = today.getDay();
+    
+    // Start from the most recent complete week
+    const startIndex = completeData.length - 1 - todayDayOfWeek;
+    
+    // Create 53 weeks (371 days which covers a year plus some buffer)
     for (let i = 0; i < 53; i++) {
       const week = [];
       for (let j = 0; j < 7; j++) {
-        const index = i * 7 + j;
-        if (index < userData.activityData.length) {
-          week.push(userData.activityData[index]);
+        const dataIndex = startIndex - (i * 7 + (6 - j));
+        if (dataIndex >= 0 && dataIndex < completeData.length) {
+          week.push(completeData[dataIndex]);
+        } else {
+          // Add empty cell if we don't have data
+          week.push({ date: '', count: 0 });
         }
       }
-      if (week.length > 0) {
-        weeks.push(week);
-      }
+      weeks.push(week);
     }
+    
     return weeks;
   };
 
-  const weeks = getCalendarData();
+  const weeks = isLoading ? [] : getCalendarData();
 
   return (
     <div className="h-5/6 bg-[#111111] p-8">
@@ -112,7 +180,7 @@ const Profile = () => {
             
             <div className="mt-4 text-[#d1d0c5]">
               <span>
-                <span className="font-semibold">248</span> Days Active
+                <span className="font-semibold">{daysActive}</span> Days Active
               </span>
             </div>
           </div>
@@ -125,6 +193,7 @@ const Profile = () => {
             <h3 className="text-lg font-semibold text-[#d1d0c5]">Coding Environment</h3>
           </div>
           
+          {/* Rest of IDE options unchanged */}
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-4">
               {languages.map((lang) => (
@@ -168,69 +237,72 @@ const Profile = () => {
             <h3 className="text-lg font-semibold text-[#d1d0c5]">Activity Calendar</h3>
           </div>
           
-          <div className="overflow-x-auto pb-4">
-            <div className="flex items-start">
-              {/* Day labels */}
-              <div className="mr-2 mt-6">
-                <div className="text-xs text-gray-400 h-3 mb-1">Mon</div>
-                <div className="text-xs text-gray-400 h-3 mb-1">Tue</div>
-                <div className="text-xs text-gray-400 h-3 mb-1">Wed</div>
-                <div className="text-xs text-gray-400 h-3 mb-1">Thu</div>
-                <div className="text-xs text-gray-400 h-3 mb-1">Fri</div>
-                <div className="text-xs text-gray-400 h-3 mb-1">Sat</div>
-                <div className="text-xs text-gray-400 h-3 mb-1">Sun</div>
+          {isLoading ? (
+            <div className="text-gray-400 text-center py-8">Loading activity data...</div>
+          ) : error ? (
+            <div className="text-red-400 text-center py-8">Error loading activity data</div>
+          ) : (
+            <div className="overflow-x-auto pb-4">
+              <div className="flex items-start">
+                {/* Day labels */}
+                <div className="mr-2">
+                  <div className="text-xs text-gray-400 h-3 mb-1">Mon</div>
+                  <div className="text-xs text-gray-400 h-3 mb-1">Tue</div>
+                  <div className="text-xs text-gray-400 h-3 mb-1">Wed</div>
+                  <div className="text-xs text-gray-400 h-3 mb-1">Thu</div>
+                  <div className="text-xs text-gray-400 h-3 mb-1">Fri</div>
+                  <div className="text-xs text-gray-400 h-3 mb-1">Sat</div>
+                  <div className="text-xs text-gray-400 h-3 mb-1">Sun</div>
+                </div>
+                
+                {/* Calendar grid */}
+                <div className="flex space-x-1">
+                  {weeks.map((week, weekIndex) => (
+                    <div key={weekIndex} className="flex flex-col space-y-1">
+                      {week.map((day, dayIndex) => {
+                        // Updated color scheme to match dark theme
+                        let bgColor = 'bg-[#2a2a2a]';
+                        if (day.count === 1) bgColor = 'bg-[#1e4620]';
+                        else if (day.count === 2) bgColor = 'bg-[#2a642c]';
+                        else if (day.count === 3) bgColor = 'bg-[#37833b]';
+                        else if (day.count >= 4) bgColor = 'bg-[#46a658]';
+                        
+                        return (
+                          <div 
+                            key={dayIndex} 
+                            className={`w-3 h-3 ${bgColor} rounded-sm border border-gray-700`}
+                            title={day.date ? `${day.date}: ${day.count} activities` : ''}
+                          ></div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
               </div>
               
-              {/* Calendar grid */}
-              <div className="flex space-x-1">
-                {weeks.map((week, weekIndex) => (
-                  <div key={weekIndex} className="flex flex-col space-y-1">
-                    {Array(7).fill(0).map((_, dayIndex) => {
-                      const day = week[dayIndex];
-                      if (!day) return <div key={dayIndex} className="w-3 h-3"></div>;
-                      
-                      // Updated color scheme to match dark theme
-                      let bgColor = 'bg-[#2a2a2a]';
-                      if (day.count === 1) bgColor = 'bg-[#1e4620]';
-                      else if (day.count === 2) bgColor = 'bg-[#2a642c]';
-                      else if (day.count === 3) bgColor = 'bg-[#37833b]';
-                      else if (day.count >= 4) bgColor = 'bg-[#46a658]';
-                      
-                      return (
-                        <div 
-                          key={dayIndex} 
-                          className={`w-3 h-3 ${bgColor} rounded-sm border border-gray-700`}
-                          title={`${day.date}: ${day.count} contributions`}
-                        ></div>
-                      );
-                    })}
-                  </div>
-                ))}
+              {/* Month labels */}
+              <div className="flex mt-2 ml-6">
+                <div className="text-xs text-gray-400 flex w-full justify-between">
+                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(month => (
+                    <span key={month}>{month}</span>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Legend */}
+              <div className="flex items-center justify-end mt-4 text-sm text-gray-400">
+                <span className="mr-2">Less</span>
+                <div className="flex space-x-1">
+                  <div className="w-3 h-3 bg-[#2a2a2a] rounded-sm border border-gray-700"></div>
+                  <div className="w-3 h-3 bg-[#1e4620] rounded-sm border border-gray-700"></div>
+                  <div className="w-3 h-3 bg-[#2a642c] rounded-sm border border-gray-700"></div>
+                  <div className="w-3 h-3 bg-[#37833b] rounded-sm border border-gray-700"></div>
+                  <div className="w-3 h-3 bg-[#46a658] rounded-sm border border-gray-700"></div>
+                </div>
+                <span className="ml-2">More</span>
               </div>
             </div>
-            
-            {/* Month labels */}
-            <div className="flex mt-2 ml-6">
-              <div className="text-xs text-gray-400 flex w-full justify-between">
-                {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(month => (
-                  <span key={month}>{month}</span>
-                ))}
-              </div>
-            </div>
-            
-            {/* Legend */}
-            <div className="flex items-center justify-end mt-4 text-sm text-gray-400">
-              <span className="mr-2">Less</span>
-              <div className="flex space-x-1">
-                <div className="w-3 h-3 bg-[#2a2a2a] rounded-sm border border-gray-700"></div>
-                <div className="w-3 h-3 bg-[#1e4620] rounded-sm border border-gray-700"></div>
-                <div className="w-3 h-3 bg-[#2a642c] rounded-sm border border-gray-700"></div>
-                <div className="w-3 h-3 bg-[#37833b] rounded-sm border border-gray-700"></div>
-                <div className="w-3 h-3 bg-[#46a658] rounded-sm border border-gray-700"></div>
-              </div>
-              <span className="ml-2">More</span>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

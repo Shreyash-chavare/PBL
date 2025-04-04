@@ -9,6 +9,8 @@ import airoute from '../controllers/ai.service.js'
 import user from '../models/usermodel.js';
 import userModel from '../models/usermodel.js';
 import { authcheck } from '../controllers/authcheck.js';
+import UserActivity from '../models/userActivity.js';
+
 
 const router=express.Router();
 router.get('/signup',(req,res)=>{ 
@@ -70,6 +72,10 @@ router.get("/test",(req,res)=>{
 //             res.status(404).send('User not found');
 //         }
 // })
+
+
+
+
 router.post('/get-code',async(req,res)=>{
     const {code}=req.body;
     if(!code) return res.status(404).send("Code is required!");

@@ -1,6 +1,7 @@
 import userModel from '../models/usermodel.js';
 import tokenuser from '../utils/usertoken.js';
 import bcrypt from 'bcryptjs';
+import UserActivity from '../models/userActivity.js'; // Import the UserActivity model
 
 const userlog = async (req, res) => {
     try {
@@ -39,6 +40,19 @@ const userlog = async (req, res) => {
                     else resolve();
                 });
             });
+
+            // Record login activity
+            try {
+                await UserActivity.create({
+                    userId: IsUser._id,
+                    activityType: 'login',
+                    date: new Date()
+                });
+                console.log(`Recorded login activity for user: ${IsUser._id}`);
+            } catch (activityError) {
+                // Log the error but don't fail the login process
+                console.error('Error recording user login activity:', activityError);
+            }
 
             console.log("Login successfully");
             res.json({ 
