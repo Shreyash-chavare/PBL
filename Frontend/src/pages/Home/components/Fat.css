@@ -1,5 +1,8 @@
 .textbox h1{
     font-size: 70px;
+   
+    
+    
 }
 
 .textbox button {
@@ -19,4 +22,16 @@
 
 .fat{
     height: 92%;
+    z-index: 2;
+    position: absolute;
+    ;
 }
+
+.gif-background {
+    background-image: url('/modified_matrix.gif'); /* Update path */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+ 
+}
+

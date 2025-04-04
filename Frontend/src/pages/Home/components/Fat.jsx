@@ -25,8 +25,11 @@ const Fat = () => {
   }
 
   return (
-
+    <>
+    <div className='gif-background'>
     <div className='fat relative'>
+      
+
       <BackgroundGlow />
 
       <div className="textbox pt-36 pl-20">
@@ -55,6 +58,8 @@ const Fat = () => {
 
 
     </div>
+    </div>
+    </>
   );
 }
 
