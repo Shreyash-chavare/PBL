@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { FiSettings, FiUser, FiLogOut } from 'react-icons/fi'
 import { useAuthstore } from '../../../stores/auth'
+import BackgroundGlow from './background_glow';
 
 const Navbar = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -48,6 +49,7 @@ const Navbar = () => {
 
     return (
         <nav className='sticky top-0 z-50 w-full bg-[#111111] shadow-md'>
+            <BackgroundGlow />
         <div className='flex justify-between items-center px-6 py-4'>
             <div onClick={handleCodeSquad} className="title text-4xl font-bold text-[#e29a14] cursor-pointer">
                 CodeSquad
