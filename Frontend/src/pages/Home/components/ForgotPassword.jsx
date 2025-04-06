@@ -16,13 +16,13 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email.trim() || !oldpass.trim() || !newpass.trim()) {
+    if (!email.trim() || !newpass.trim()) {
       return toast.error('Please fill out all fields.');
     }
 
-    if (newpass == oldpass) {
-      return toast.error('Already used Password');
-    }
+    // if (newpass == oldpass) {
+    //   return toast.error('Already used Password');
+    // }
 
     // Check if new password matches confirmation
     if (newpass !== confirmNewPass) {
@@ -32,7 +32,7 @@ const ForgotPassword = () => {
 
     setIsLoading(true);
     try {
-      const res = await axiosinstance.post('/forgot-password', { email, oldpass, newpass });
+      const res = await axiosinstance.post('/forgot-password', { email, newpass });
       if (res.data.success) {
         setEmailSent(true);
         toast.success('Password is reset successfully', {
@@ -76,7 +76,7 @@ const ForgotPassword = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="email" className="sr-only">
                 Old Password
               </label>
@@ -90,7 +90,7 @@ const ForgotPassword = () => {
                 value={oldpass}
                 onChange={(e) => setOldpass(e.target.value)}
               />
-            </div>
+            </div> */}
 
             <div>
               <label htmlFor="email" className="sr-only">

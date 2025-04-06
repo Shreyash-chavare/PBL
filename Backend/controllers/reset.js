@@ -3,9 +3,9 @@ import bcrypt from 'bcryptjs';
 
 export const reset = async (req, res) => {
     try {
-        const { email, oldpass, newpass } = req.body;
+        const { email, newpass } = req.body;
 
-        if (!email || !oldpass || !newpass) {
+        if (!email || !newpass) {
             return res.status(400).json({ success: false, message: "Please provide all required fields." });
         }
 
@@ -16,10 +16,10 @@ export const reset = async (req, res) => {
         }
 
         // Check if old password is correct
-        const isMatch = await bcrypt.compare(oldpass, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ success: false, message: "Old password is incorrect." });
-        }
+        // const isMatch = await bcrypt.compare(oldpass, user.password);
+        // if (!isMatch) {
+        //     return res.status(400).json({ success: false, message: "Old password is incorrect." });
+        // }
 
         // Hash the new password
         const salt = await bcrypt.genSalt(10);
