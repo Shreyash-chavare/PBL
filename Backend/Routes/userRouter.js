@@ -10,6 +10,7 @@ import user from '../models/usermodel.js';
 import userModel from '../models/usermodel.js';
 import { authcheck } from '../controllers/authcheck.js';
 import UserActivity from '../models/userActivity.js';
+import { reset } from '../controllers/reset.js';
 
 
 const router=express.Router();
@@ -85,5 +86,7 @@ router.post('/get-code',async(req,res)=>{
 
 router.post('/createusers',authuser);
 router.post('/login',userlog);
+
+router.post('/forgot-password',reset)
 router.get('/logout',logoutuser);
 export default router;

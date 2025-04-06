@@ -251,7 +251,7 @@ function Dashboard() {
         />
       </div>
     </div>
-    {/* {flag && <VoiceChat roomId={roomId} username={username} isMuted={isMuted} />} */}
+    {flag && <VoiceChat roomId={roomId} username={username} isMuted={isMuted} />}
     </>
   );
 }

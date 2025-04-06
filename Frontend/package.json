@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.5",
+    "@lottiefiles/dotlottie-react": "^0.13.3",
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@tailwindcss/vite": "^4.0.3",
     "axios": "^1.8.4",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.483.0",
     "prismjs": "^1.30.0",
     "react": "^19.0.0",

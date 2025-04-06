@@ -11,7 +11,6 @@ import { Toaster } from 'sonner';
 import { useAuthstore } from '../../stores/auth';
 import { Loader } from 'lucide-react';
 import ForgotPassword from './components/ForgotPassword';
-import ResetPassword from './components/ResetPassword';
 import LeetCodeProblems from '../Dashboard/LeetCodeProblems';
 
 function App() {
@@ -44,7 +43,6 @@ function App() {
         <Route path="/app" element={authUser ? <Dashboard /> : <Navigate to="/login"/>} />
         <Route path="/profile" element={authUser ? <Profile /> : <Navigate to="/login"/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/problems" element={authUser ? <LeetCodeProblems /> : <Navigate to="/login"/>} />
       </Routes>
       <Toaster position="top-center" richColors closeButton />
