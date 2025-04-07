@@ -59,7 +59,7 @@ const Login = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-#1a1a1a">
       <BackgroundGlow />
-      <div className="w-full max-w-md bg-#1a1a1a rounded-lg shadow-lg p-8 border-yellow-600 border-2">
+      <div className="w-full max-w-md bg-#1a1a1a rounded-lg shadow-lg shadow-yellow-600 p-8 border-yellow-600 border-2">
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-200">Login to your Account</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>

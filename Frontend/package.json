@@ -12,6 +12,7 @@
   "dependencies": {
     "@fontsource/roboto": "^5.2.5",
     "@lottiefiles/dotlottie-react": "^0.13.3",
+    "@lottiefiles/lottie-player": "^2.0.12",
     "@lottiefiles/react-lottie-player": "^3.6.0",
     "@tailwindcss/vite": "^4.0.3",
     "axios": "^1.8.4",

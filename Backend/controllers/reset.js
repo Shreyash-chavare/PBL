@@ -22,6 +22,11 @@ export const reset = async (req, res) => {
         // }
 
         // Hash the new password
+
+         const isMatch=await bcrypt.compare(newpass,user.password);
+
+         if(isMatch) return res.status(400).json({success:false,message:"Already used password"});
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newpass, salt);
 
