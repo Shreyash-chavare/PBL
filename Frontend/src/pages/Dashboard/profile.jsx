@@ -97,17 +97,16 @@ const Profile = () => {
     navigate("/problems");
   };
 
-  // Function to fill in missing dates with zero counts
   const fillMissingDates = (data) => {
     const filledData = [...data];
     const dateSet = new Set(data.map(item => item.date));
     
-    const today = new Date();
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(today.getFullYear() - 1);
+    const currentYear = new Date().getFullYear();
+    const startOfYear = new Date(currentYear, 0, 1); // January 1st of current year
+    const endOfYear = new Date(currentYear, 11, 31); // December 31st of current year
     
-    // Iterate through each day in the last year
-    for (let d = new Date(oneYearAgo); d <= today; d.setDate(d.getDate() + 1)) {
+    // Iterate through each day in the current year
+    for (let d = new Date(startOfYear); d <= endOfYear; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().split('T')[0];
       if (!dateSet.has(dateStr)) {
         filledData.push({ date: dateStr, count: 0 });
@@ -117,41 +116,89 @@ const Profile = () => {
     // Sort by date
     return filledData.sort((a, b) => new Date(a.date) - new Date(b.date));
   };
-
-  // Function to group activity data by week
+  
+  // Function to group activity data by month
   const getCalendarData = () => {
-    // Make sure we have data for every day
+    // Make sure we have data for every day in the current year
     const completeData = fillMissingDates(activityData);
     
-    const weeks = [];
-    let dayIndex = 0;
-    
-    // Get today's day of week (0 = Sunday, 6 = Saturday)
+    const currentYear = new Date().getFullYear();
     const today = new Date();
-    const todayDayOfWeek = today.getDay();
+    const todayStr = today.toISOString().split('T')[0];
     
-    // Start from the most recent complete week
-    const startIndex = completeData.length - 1 - todayDayOfWeek;
+    // Define the order of days (Monday first, Sunday last)
+    const dayOrder = [1, 2, 3, 4, 5, 6, 0]; // Mon, Tue, Wed, Thu, Fri, Sat, Sun
     
-    // Create 53 weeks (371 days which covers a year plus some buffer)
-    for (let i = 0; i < 53; i++) {
-      const week = [];
-      for (let j = 0; j < 7; j++) {
-        const dataIndex = startIndex - (i * 7 + (6 - j));
-        if (dataIndex >= 0 && dataIndex < completeData.length) {
-          week.push(completeData[dataIndex]);
-        } else {
-          // Add empty cell if we don't have data
-          week.push({ date: '', count: 0 });
+    // Create an array to hold calendar data for each month
+    const months = [];
+    
+    // Process each month
+    for (let month = 0; month < 12; month++) {
+      const firstDayOfMonth = new Date(currentYear, month, 1);
+      const lastDayOfMonth = new Date(currentYear, month + 1, 0);
+      
+      // Get the day of week (0-6) for the first day
+      const firstDayDOW = firstDayOfMonth.getDay();
+      // Convert to our order where Monday is first (0) and Sunday is last (6)
+      const firstDayOrderIndex = dayOrder.indexOf(firstDayDOW);
+      
+      const weeks = [];
+      let currentWeek = Array(7).fill(null); // Start with empty week
+      let dayCounter = 0; // Track which day of the week we're on
+      
+      // If the month doesn't start on Monday, add empty cells
+      if (firstDayOrderIndex > 0) {
+        dayCounter = firstDayOrderIndex;
+      }
+      
+      // Add days to the month grid
+      for (let day = 1; day <= lastDayOfMonth.getDate(); day++) {
+        const currentDate = new Date(currentYear, month, day);
+        const dateStr = currentDate.toISOString().split('T')[0];
+        
+        // Find position in week (0-6) based on our day order
+        const dayOfWeek = currentDate.getDay();
+        const dayOrderIndex = dayOrder.indexOf(dayOfWeek);
+        
+        // Find matching data or use empty data
+        const matchingData = completeData.find(item => item.date === dateStr);
+        const dayData = matchingData ? {
+          ...matchingData,
+          isToday: dateStr === todayStr,
+          isFuture: currentDate > today
+        } : {
+          date: dateStr,
+          count: 0,
+          isToday: dateStr === todayStr,
+          isFuture: currentDate > today
+        };
+        
+        // Place in current week
+        currentWeek[dayOrderIndex] = dayData;
+        dayCounter++;
+        
+        // If it's the last day of the week or month, push the week and start a new one
+        if (dayCounter === 7 || day === lastDayOfMonth.getDate()) {
+          weeks.push([...currentWeek]);
+          currentWeek = Array(7).fill(null); // Reset for next week
+          dayCounter = 0;
         }
       }
-      weeks.push(week);
+      
+      // Create month object with name, weeks data, etc.
+      months.push({
+        name: new Date(currentYear, month, 1).toLocaleString('default', { month: 'long' }),
+        number: month + 1,
+        weeks: weeks,
+        firstDayIndex: firstDayOrderIndex,
+        daysInMonth: lastDayOfMonth.getDate()
+      });
     }
     
-    return weeks;
+    return months;
   };
-
-  const weeks = isLoading ? [] : getCalendarData();
+  
+  const months = isLoading ? [] : getCalendarData();
 
   return (
     <div className="h-5/6 bg-[#111111] p-8">
@@ -243,51 +290,70 @@ const Profile = () => {
             <div className="text-red-400 text-center py-8">Error loading activity data</div>
           ) : (
             <div className="overflow-x-auto pb-4">
-              <div className="flex items-start">
+              <div className="flex items-center">
                 {/* Day labels */}
-                <div className="mr-2">
-                  <div className="text-xs text-gray-400 h-3 mb-1">Mon</div>
-                  <div className="text-xs text-gray-400 h-3 mb-1">Tue</div>
-                  <div className="text-xs text-gray-400 h-3 mb-1">Wed</div>
-                  <div className="text-xs text-gray-400 h-3 mb-1">Thu</div>
-                  <div className="text-xs text-gray-400 h-3 mb-1">Fri</div>
-                  <div className="text-xs text-gray-400 h-3 mb-1">Sat</div>
-                  <div className="text-xs text-gray-400 h-3 mb-1">Sun</div>
-                </div>
+
                 
                 {/* Calendar grid */}
-                <div className="flex space-x-1">
-                  {weeks.map((week, weekIndex) => (
-                    <div key={weekIndex} className="flex flex-col space-y-1">
-                      {week.map((day, dayIndex) => {
-                        // Updated color scheme to match dark theme
-                        let bgColor = 'bg-[#2a2a2a]';
-                        if (day.count === 1) bgColor = 'bg-[#1e4620]';
-                        else if (day.count === 2) bgColor = 'bg-[#2a642c]';
-                        else if (day.count === 3) bgColor = 'bg-[#37833b]';
-                        else if (day.count >= 4) bgColor = 'bg-[#46a658]';
-                        
-                        return (
-                          <div 
-                            key={dayIndex} 
-                            className={`w-3 h-3 ${bgColor} rounded-sm border border-gray-700`}
-                            title={day.date ? `${day.date}: ${day.count} activities` : ''}
-                          ></div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
+{/* Calendar container with month grid layout */}
+<div className="flex flex-wrap gap-3">
+  {months.map((month, monthIndex) => (
+    <div key={monthIndex} className="calendar-month border border-gray-700 rounded-md p-3 bg-gray-900">
+      <h3 className="text-lg font-medium mb-2 text-white">{month.name}</h3>
+      
+      {/* Month grid with day headers */}
+      <div className="">
+        {/* Day headers */}
+        <div className="flex space-x-1 mb-1">
+          <div className="w-3 text-xs text-gray-500">S</div>
+          <div className="w-3 text-xs text-gray-500">M</div>
+          <div className="w-3 text-xs text-gray-500">T</div>
+          <div className="w-3 text-xs text-gray-500">W</div>
+          <div className="w-3 text-xs text-gray-500">T</div>
+          <div className="w-3 text-xs text-gray-500">F</div>
+          <div className="w-3 text-xs text-gray-500">S</div>
+        </div>
+        
+        {/* Calendar grid */}
+        <div className="flex flex-col space-y-1">
+          {month.weeks.map((week, weekIndex) => (
+            <div key={weekIndex} className="flex space-x-1">
+              {week.map((day, dayIndex) => {
+                // Check if the day is null (empty cell)
+                if (day === null) {
+                  return <div key={dayIndex} className="w-3 h-3 bg-transparent"></div>;
+                }
+                
+                // Updated color scheme to match dark theme
+                let bgColor = 'bg-[#2a2a2a]';
+                if (day.count === 1) bgColor = 'bg-[#1e4620]';
+                else if (day.count === 2) bgColor = 'bg-[#2a642c]';
+                else if (day.count === 3) bgColor = 'bg-[#37833b]';
+                else if (day.count >= 4) bgColor = 'bg-[#46a658]';
+                
+                // Add highlight for today
+                if (day.isToday) {
+                  bgColor += ' ring-1 ring-white';
+                }
+                
+                return (
+                  <div 
+                    key={dayIndex} 
+                    className={`w-3 h-3 ${bgColor} rounded-sm border border-gray-700`}
+                    title={day.date ? `${day.date}: ${day.count} activities` : ''}
+                  ></div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
               </div>
               
-              {/* Month labels */}
-              <div className="flex mt-2 ml-6">
-                <div className="text-xs text-gray-400 flex w-full justify-between">
-                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map(month => (
-                    <span key={month}>{month}</span>
-                  ))}
-                </div>
-              </div>
+
               
               {/* Legend */}
               <div className="flex items-center justify-end mt-4 text-sm text-gray-400">
