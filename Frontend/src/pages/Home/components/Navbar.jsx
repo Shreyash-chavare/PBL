@@ -4,6 +4,7 @@ import { FiSettings, FiUser, FiLogOut } from 'react-icons/fi'
 import { useAuthstore } from '../../../stores/auth'
 import BackgroundGlow from './background_glow';
 
+
 const Navbar = () => {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const navigate = useNavigate();

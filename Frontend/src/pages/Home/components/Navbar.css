@@ -37,3 +37,8 @@ button {
   .dropdown-content li a:hover {
     color: #fff;
   }
+
+  .web-logo {
+    width: 50px;
+    margin: 0;
+  }
