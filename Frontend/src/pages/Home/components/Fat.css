@@ -1,9 +1,12 @@
 .textbox h1{
     font-size: 70px;
-   
-    
-    
+    background-color: black;
+    width: fit-content;
+    text-shadow: 0px 0px 15px rgb(17, 153, 2); 
+
+
 }
+
 
 .textbox button {
     padding: 10px 15px;
