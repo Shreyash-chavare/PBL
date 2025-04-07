@@ -67,7 +67,7 @@ const Signup = () => {
 
   return (
     <div className="flex justify-center items-center h-screen bg-black">
-      <div className="flex bg-white rounded-lg shadow-lg border-2 border-yellow-600 overflow-hidden w-3/4 max-w-4xl mt-4">
+      <div className="flex bg-white rounded-lg shadow-lg shadow-yellow-600 border-2 border-yellow-600 overflow-hidden w-3/4 max-w-4xl mt-4">
         <div className="w-1/2 bg-gray-900 text-white p-8 flex flex-col justify-center items-center">
           <h1 className="text-4xl mb-2">Registration Page</h1>
           <p className="text-lg">Start Your Development Journey Here!</p>
