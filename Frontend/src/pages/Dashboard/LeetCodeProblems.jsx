@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import "./problems.css"; 
+import "./problems.css";
 import { useNavigate } from 'react-router-dom';
 const LeetCodeProblems = () => {
     const [problemlist, setProblemlist] = useState([]);
@@ -72,9 +72,9 @@ const LeetCodeProblems = () => {
                         'Content-Type': 'application/json'
                     }
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (!response.ok) {
                     throw new Error(data.error || `Server error: ${response.status}`);
                 }
@@ -98,7 +98,7 @@ const LeetCodeProblems = () => {
         setSearchLoading(true);
         setError(null);
         try {
-            const response = await fetch(`http://localhost:3000/api/leetcode/problem/:${questionId}`, {
+            const response = await fetch(`http://localhost:3000/api/leetcode/problem/${questionId}`, {
                 credentials: 'include',
                 headers: {
                     'Accept': 'application/json'
@@ -120,7 +120,7 @@ const LeetCodeProblems = () => {
         }
     };
 
-    const handleOpenProblem = (problem) =>{
+    const handleOpenProblem = (problem) => {
         console.log(problem)
         navigate('/app', {
             state: {
@@ -140,7 +140,7 @@ const LeetCodeProblems = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/leetcode/problem/:${problemId}`, {
+            const response = await fetch(`http://localhost:3000/api/leetcode/problem/${problemId}`, {
                 credentials: 'include',
                 headers: {
                     'Accept': 'application/json'
@@ -189,74 +189,123 @@ const LeetCodeProblems = () => {
                 </div>
 
                 {/* Problems List */}
-                <div className="bg-[#111111] p-4 rounded-lg">
-                    <h2 className="text-xl font-bold text-[#d1d0c5] mb-4">All Problems</h2>
-                    <div className="space-y-2">
-                        {problemlist.map(problem => (
-                            <div key={problem.questionFrontendId}>
-                                <div 
-                                    onClick={() => handleProblemClick(problem.questionFrontendId)}
-                                    className="p-3 border border-gray-700 rounded bg-[#1a1a1a] hover:bg-[#2a2a2a] cursor-pointer transition-colors"
-                                >
-                                    <div className="flex justify-between items-center">
-                                        <div>
-                                            <span className="font-medium">{problem.questionFrontendId}. </span>
-                                            {problem.title}
-                                        </div>
-                                        <span className={`ml-2 px-2 py-1 rounded text-sm ${
-                                            problem.difficulty === 'Easy' ? 'bg-green-900 text-green-100' :
-                                            problem.difficulty === 'Medium' ? 'bg-yellow-900 text-yellow-100' :
-                                            'bg-red-900 text-red-100'
-                                        }`}>
-                                            {problem.difficulty}
-                                        </span>
+                {selectedProblem ? (
+                    <div className="bg-[#111111] p-4 rounded-lg">
+                        <h2 className="text-xl font-bold text-[#d1d0c5] mb-4">Search Result</h2>
+                        <div className="p-3 border border-gray-700 rounded bg-[#1a1a1a]">
+                            <div className="flex justify-between items-start">
+                                <div className="space-y-2">
+                                    <h3 className="text-lg font-semibold text-[#d1d0c5]">
+                                        {selectedProblem.questionFrontendId}. {selectedProblem.title}
+                                    </h3>
+                                    <div className="text-[#d1d0c5] font-mono whitespace-pre-wrap">
+                                        {convertHtmlToPlainText(selectedProblem.content)}
                                     </div>
                                 </div>
-                                
-                                {expandedProblemId === problem.questionFrontendId && selectedProblem && (
-                                    <div className="mt-2 ml-4 p-4 border-l-2 border-gray-700 bg-[#1a1a1a] rounded">
-                                        <div className="space-y-4">
-                                            <div className="flex justify-between items-start">
-                                                <div className="space-y-2">
-                                                    <h3 className="text-lg font-semibold text-[#d1d0c5]">{selectedProblem.title}</h3>
-                                                    <div className="text-[#d1d0c5] font-mono whitespace-pre-wrap">
-                                                        {convertHtmlToPlainText(selectedProblem.content)}
-                                                    </div>
-                                                </div>
-                                                <button 
-                                                    onClick={() => handleOpenProblem(selectedProblem)}
-                                                    className="px-4 py-2 bg-[#2a2a2a] text-[#d1d0c5] rounded hover:bg-[#3a3a3a] transition-colors border border-gray-700"
-                                                >
-                                                    Open Problem
-                                                </button>
+                                <button
+                                    onClick={() => handleOpenProblem(selectedProblem)}
+                                    className="px-4 py-2 bg-[#2a2a2a] text-[#d1d0c5] rounded hover:bg-[#3a3a3a] transition-colors border border-gray-700"
+                                >
+                                    Open Problem
+                                </button>
+                            </div>
+                            <div className="flex flex-col gap-4 mt-4">
+                                <div>
+                                    <p className="text-sm text-gray-400">Success Rate</p>
+                                    <p className="text-[#d1d0c5]">{JSON.parse(selectedProblem.stats).acRate}%</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-400">Topics</p>
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                        {selectedProblem.topicTags.map((tag) => (
+                                            <span
+                                                key={tag.name}
+                                                className="px-2 py-1 bg-[#111111] text-[#d1d0c5] text-sm rounded border border-gray-700"
+                                            >
+                                                {tag.name}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => setSelectedProblem(null)}
+                            className="mt-4 px-4 py-2 bg-[#222222] text-[#d1d0c5] rounded hover:bg-[#333333] transition-colors border border-gray-700"
+                        >
+                            Back to All Problems
+                        </button>
+                    </div>
+                ) : (
+                    // 📃 Show full list
+                    <div className="bg-[#111111] p-4 rounded-lg">
+                        <h2 className="text-xl font-bold text-[#d1d0c5] mb-4">All Problems</h2>
+                        <div className="space-y-2">
+                            {problemlist.map(problem => (
+                                <div key={problem.questionFrontendId}>
+                                    <div
+                                        onClick={() => handleProblemClick(problem.questionFrontendId)}
+                                        className="p-3 border border-gray-700 rounded bg-[#1a1a1a] hover:bg-[#2a2a2a] cursor-pointer transition-colors"
+                                    >
+                                        <div className="flex justify-between items-center">
+                                            <div>
+                                                <span className="font-medium">{problem.questionFrontendId}. </span>
+                                                {problem.title}
                                             </div>
-                                            <div className="flex flex-col gap-4">
-                                                <div>
-                                                    <p className="text-sm text-gray-400">Success Rate</p>
-                                                    {console.log(selectedProblem.stats.totalSubmission)}
-                                                    <p className="text-[#d1d0c5]">{JSON.parse(selectedProblem.stats).acRate}%</p>
+                                            <span className={`ml-2 px-2 py-1 rounded text-sm ${problem.difficulty === 'Easy' ? 'bg-green-900 text-green-100' :
+                                                    problem.difficulty === 'Medium' ? 'bg-yellow-900 text-yellow-100' :
+                                                        'bg-red-900 text-red-100'
+                                                }`}>
+                                                {problem.difficulty}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {expandedProblemId === problem.questionFrontendId && selectedProblem && (
+                                        <div className="mt-2 ml-4 p-4 border-l-2 border-gray-700 bg-[#1a1a1a] rounded">
+                                            <div className="space-y-4">
+                                                <div className="flex justify-between items-start">
+                                                    <div className="space-y-2">
+                                                        <h3 className="text-lg font-semibold text-[#d1d0c5]">{selectedProblem.title}</h3>
+                                                        <div className="text-[#d1d0c5] font-mono whitespace-pre-wrap">
+                                                            {convertHtmlToPlainText(selectedProblem.content)}
+                                                        </div>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleOpenProblem(selectedProblem)}
+                                                        className="px-4 py-2 bg-[#2a2a2a] text-[#d1d0c5] rounded hover:bg-[#3a3a3a] transition-colors border border-gray-700"
+                                                    >
+                                                        Open Problem
+                                                    </button>
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm text-gray-400">Topics</p>
-                                                    <div className="flex flex-wrap gap-2 mt-1">
-                                                        {selectedProblem.topicTags.map((tag) => (
-                                                            <span 
-                                                                key={tag.name}
-                                                                className="px-2 py-1 bg-[#111111] text-[#d1d0c5] text-sm rounded border border-gray-700"
-                                                            >
-                                                                {tag.name}
-                                                            </span>
-                                                        ))}
+                                                <div className="flex flex-col gap-4">
+                                                    <div>
+                                                        <p className="text-sm text-gray-400">Success Rate</p>
+                                                        <p className="text-[#d1d0c5]">{JSON.parse(selectedProblem.stats).acRate}%</p>
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm text-gray-400">Topics</p>
+                                                        <div className="flex flex-wrap gap-2 mt-1">
+                                                            {selectedProblem.topicTags.map((tag) => (
+                                                                <span
+                                                                    key={tag.name}
+                                                                    className="px-2 py-1 bg-[#111111] text-[#d1d0c5] text-sm rounded border border-gray-700"
+                                                                >
+                                                                    {tag.name}
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
+
             </div>
         </div>
     );

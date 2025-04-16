@@ -63,7 +63,7 @@ const Profile = () => {
   const userData = {
     username: authUser?.name || 'Not Available',
     email: authUser?.email || 'Not Available',
-    profileImage: '/api/placeholder/150/150',
+    profileImage: 'https://img.freepik.com/free-vector/user-circles-set_78370-4704.jpg?ga=GA1.1.2027076217.1740375917&semt=ais_hybrid&w=740',
   };
 
   function generateSampleActivityData() {

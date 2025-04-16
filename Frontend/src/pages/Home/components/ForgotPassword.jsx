@@ -146,8 +146,6 @@ const ForgotPassword = () => {
             <p className="mb-4 text-lg font-bold text-gray-800">
               Your password has been updated successfully!
             </p>
-
-
           </div>
         )}
 

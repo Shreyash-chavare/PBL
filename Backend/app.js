@@ -322,22 +322,32 @@ app.get('/api/leetcode/problem/:id', async (req, res) => {
     try {
         const leetcode = new LeetCode();
         const problemlist = await leetcode.problems();
-        const selected_problem1 = problemlist.questions.find(p => p.questionFrontendId === req.params.id.slice(1));
+
+        const selected_problem1 = problemlist.questions.find(
+            p => p.questionFrontendId === req.params.id
+        );
+
+        if (!selected_problem1) {
+            return res.status(404).json({ error: 'Problem not found' });
+        }
+
         const selected_problem = await leetcode.problem(selected_problem1.titleSlug);
+
         if (!selected_problem) {
             return res.status(404).json({ error: 'Problem not found' });
         }
-        
+
+        console.log("Fetched", selected_problem.title);
         res.json(selected_problem);
-        console.log("fetched", selected_problem)
     } catch (error) {
         console.error('LeetCode API error:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Failed to fetch problem',
-            details: error.message 
+            details: error.message
         });
     }
 });
+
 
 
 
