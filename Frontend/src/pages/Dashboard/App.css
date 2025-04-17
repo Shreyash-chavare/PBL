@@ -135,7 +135,7 @@ html, body {
     display: flex;
     flex-direction: column;
     background: #111111;
-    /* padding: 1rem; */
+    padding: 1rem;
     border-radius: 0.5rem;
     overflow: hidden; /* Hide overflow initially */
 }

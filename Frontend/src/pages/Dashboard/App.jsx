@@ -92,19 +92,17 @@ function Dashboard() {
       setDifficulty(problemInfo.difficulty)
       setProblemId(problemInfo.problemId)
     })
-  }, []);
-
+  }, []); 
+  
   useEffect(() => {
     if (problemData && roomId) {
       setProblemTitle(problemData.title);
       setProblemContent(problemData.content);
       setDifficulty(problemData.difficulty);
       setProblemId(problemData.problemId);
-
-
     }
   }, [problemData])
-
+  
   useEffect(() => {
     if (problemData) {
       socketRef.current?.emit("problem-update", {
@@ -115,8 +113,9 @@ function Dashboard() {
           difficulty: problemData.difficulty,
           problemId: problemData.problemId
         }
-
+        
       });
+      // console.log("hi", problemData)
     }
   }, [roomMembers])
 
@@ -175,7 +174,8 @@ function Dashboard() {
     <div className="container">
       <div className='problem-section'>
         {flag ? (
-          <div className={`bg-[#111111] p-4 rounded-lg mb-4 ${problemData? 'room-members': 'fullroom'}`}>
+          <div className={`bg-[#111111] p-4 rounded-lg mb-4 room-members`}>
+            
             <div className="squad-header">
                 <div className="squad-name">
                   <h1 className="mr-8"> Squad </h1>
@@ -205,7 +205,7 @@ function Dashboard() {
             </div>
           </div>
         ) : (
-          <div className={` bg-[#111111] p-4 rounded-lg mb-4 ${problemData? 'join-room-section': 'fullroom'}`}>
+          <div className={` bg-[#111111] p-4 rounded-lg mb-4 join-room-section`}>
             <label className="text-sm text-gray-300">Join Room</label>
             <div className="flex mt-2">
               <input
@@ -225,7 +225,7 @@ function Dashboard() {
           </div>
         )}
 
-        <div className={`${problemData? 'problem-content-section': 'no-content'}`}>
+        <div className={`problem-content-section`}>
           <h2 className="section-title">Problem Statement</h2>
           <div className="problem-header">
             <div className="flex items-center gap-2">

@@ -206,11 +206,7 @@ const Profile = () => {
         {/* User Profile Section */}
         <div className="flex items-start space-x-6">
           {/* Profile Picture */}
-          <img
-            src={userData.profileImage}
-            alt="Profile"
-            className="w-24 h-24 rounded-full object-cover border-2 border-gray-700"
-          />
+          <img src="https://avatars.githubusercontent.com/u/1733352?s=80&amp;v=4" jsaction="" className="sFlh5c FyHeAf iPVvYb h-28 rounded-full" alt="Making profile picture private? · Issue #4330 · diaspora/diaspora · GitHub" jsname="kn3ccd" aria-hidden="false"/>
           
           <div className="flex-1">
             {/* Email */}
