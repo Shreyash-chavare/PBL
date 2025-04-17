@@ -322,7 +322,7 @@ app.get('/api/leetcode/problem/:id', async (req, res) => {
     try {
         const leetcode = new LeetCode();
         const problemlist = await leetcode.problems();
-        const selected_problem1 = problemlist.questions.find(p => p.questionFrontendId === req.params.id.slice(1));
+        const selected_problem1 = problemlist.questions.find(p => p.questionFrontendId === req.params.id);
         const selected_problem = await leetcode.problem(selected_problem1.titleSlug);
         if (!selected_problem) {
             return res.status(404).json({ error: 'Problem not found' });
