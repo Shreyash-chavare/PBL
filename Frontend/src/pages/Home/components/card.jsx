@@ -3,13 +3,28 @@ import { useState } from "react";
 
 export default function HoverCard({ text, hoverText }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [hoverTimer, setHoverTimer] = useState(null);
+
+  const handleMouseEnter = () => {
+    const timer = setTimeout(() => {
+      setIsHovered(true);
+    }, 300); // 0.5 seconds delay
+    setHoverTimer(timer);
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimer) {
+      clearTimeout(hoverTimer);
+    }
+    setIsHovered(false);
+  };
 
   return (
     <motion.div
       layout // Ensures smooth reordering of sibling elements
       initial={{ width: 120, height: 60, borderRadius: "8px" }}
       animate={isHovered ? { width: 250, height: "auto", padding: "16px" } : { width: 120, height: 60 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
+      transition={{ duration: 0.7, ease: "easeInOut" }}
       className="cursor-pointer flex items-center justify-center text-center"
       style={{
         backgroundColor: "#e29a14",
@@ -18,8 +33,8 @@ export default function HoverCard({ text, hoverText }) {
         minHeight: "60px",
         color: "#111111", // Text color
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <motion.div
         key={isHovered ? "hoverText" : "defaultText"}

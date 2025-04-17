@@ -33,6 +33,12 @@ const Navbar = () => {
         }
     };
 
+    const handleOnline = ()=>{
+        navigate('/practice', { state:{
+            setlang: "python"
+          }})
+    }
+
     const handleLang = (e) =>{
         const textlang = e.currentTarget.querySelector("span").innerText
         const langId = langmap.get(textlang)
@@ -50,7 +56,7 @@ const Navbar = () => {
 
     return (
         <nav className='sticky top-0 z-50 w-full bg-[#111111] shadow-md'>
-            <BackgroundGlow />
+          
         <div className='flex justify-between items-center px-6 py-4'>
             <div onClick={handleCodeSquad} className="title text-4xl font-bold text-[#e29a14] cursor-pointer">
                 CodeSquad
@@ -129,17 +135,17 @@ const Navbar = () => {
                     <div className="absolute right-0 top-full mt-1 w-52 rounded-lg shadow-lg bg-[#1a1a1a] ring-1 ring-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top scale-95 group-hover:scale-100">
                         <ul className="py-1 divide-y divide-gray-700">
                             <li className="group/item hover:bg-[#222222] transition-colors">
-                                <Link to="/practice" className="px-3 py-2 flex items-center gap-2 w-full">
+                                <button onClick={handleOnline} className="px-3 py-2 flex items-center gap-2 w-full">
                                     <span className="w-8 h-8 rounded-lg bg-green-800 flex items-center justify-center text-green-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
                                         </svg>
                                     </span>
                                     <span className="font-medium text-gray-300">Online</span>
-                                </Link>
+                                </button>
                             </li>
                             <li className="group/item hover:bg-[#222222] transition-colors">
-                                <Link to="/login" className="px-3 py-2 flex items-center gap-2 w-full">
+                                <Link to="/profile" className="px-3 py-2 flex items-center gap-2 w-full">
                                     <span className="w-8 h-8 rounded-lg bg-purple-800 flex items-center justify-center text-purple-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>

@@ -3,7 +3,7 @@ import './Fat.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthstore } from '../../../stores/auth';
 import HoverCard from './card';
-import BackgroundGlow from './background_glow';
+// import BackgroundGlow from './background_glow';
 
 
 const Fat = () => {
@@ -30,7 +30,7 @@ const Fat = () => {
     <div className='fat relative'>
       
 
-      <BackgroundGlow />
+      
 
       <div className="textbox pt-36 pl-20">
         <h1>Code</h1>
