@@ -272,7 +272,7 @@ const OnlineCompiler = ({ setParentReview , room , setFlag , flag}) => {
                     </div>
                     <div className="output-section">
                         <div className="section-header">Output</div>
-                        <pre className="output-display">{output}</pre>
+                        <pre className="output-display overflow-auto ">{output}</pre>
                     </div>
                 </div>
             )}   

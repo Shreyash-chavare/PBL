@@ -138,12 +138,7 @@ const Signup = () => {
                 "Create Account"
               )}
             </button>
-              <button
-                type="button"
-                className="w-full p-2 bg-red-600 text-white rounded hover:bg-red-700 mt-4"
-              >
-                Continue with Google
-              </button>
+              
             </form>
             <div className="text-center mt-4">
               <p>
