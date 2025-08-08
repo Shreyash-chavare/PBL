@@ -1,0 +1,28 @@
+services:
+  # Backend API Service
+  - type: web
+    name: collaborative-editor-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_TOKEN
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: FRONTEND_URL
+        value: https://collaborative-editor-frontend.onrender.com
+
+  # Frontend Service
+  - type: web
+    name: collaborative-editor-frontend
+    env: static
+    plan: free
+    buildCommand: cd Frontend && npm install && npm run build
+    staticPublishPath: ./Frontend/dist
+    envVars:
+      - key: VITE_BACKEND_URL
+        value: https://collaborative-editor-backend.onrender.com
