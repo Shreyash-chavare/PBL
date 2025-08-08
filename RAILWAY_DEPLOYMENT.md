@@ -14,8 +14,8 @@
 ## Step 2: Deploy Backend
 1. Click "Deploy from GitHub repo"
 2. Select your repository: `Shreyash-chavare/PBL`
-3. Railway will automatically detect it's a Node.js app
-4. **Important**: Set the root directory to `/` (not `/Backend`)
+3. **Important**: Set the root directory to `/Backend`
+4. Railway will automatically detect it's a Node.js app
 5. Click "Deploy Now"
 
 ## Step 3: Add MongoDB Database
