@@ -15,7 +15,8 @@
 1. Click "Deploy from GitHub repo"
 2. Select your repository: `Shreyash-chavare/PBL`
 3. Railway will automatically detect it's a Node.js app
-4. Click "Deploy Now"
+4. **Important**: Set the root directory to `/` (not `/Backend`)
+5. Click "Deploy Now"
 
 ## Step 3: Add MongoDB Database
 1. In your project dashboard, click "New"
@@ -38,10 +39,9 @@
 1. In Railway dashboard, click "New"
 2. Select "GitHub Repo"
 3. Select the same repository: `Shreyash-chavare/PBL`
-4. Configure:
-   - Build Command: `cd Frontend && npm install && npm run build`
-   - Output Directory: `Frontend/dist`
-5. Add environment variable:
+4. **Important**: Set the root directory to `/Frontend`
+5. Railway will automatically detect it's a React app
+6. Add environment variable:
    ```
    VITE_BACKEND_URL=https://collaborative-editor-backend.railway.app
    ```
