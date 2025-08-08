@@ -12,10 +12,15 @@ const dbUri = process.env.NODE_ENV === 'production'
     ? process.env.MONGODB_URI 
     : `${config.get("DB_URI")}/PBL`;
 
-const mongo=mongoose.connect(dbUri)
+const mongo=mongoose.connect(dbUri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
 .then(()=>{
-    dbg("connected")
+    dbg("MongoDB connected successfully")
+    console.log("✅ Database connection established")
 }).catch((err)=>{
-    console.log(err);
+    console.error("❌ MongoDB connection error:", err.message);
+    console.error("Connection string used:", dbUri.replace(/\/\/[^:]+:[^@]+@/, '//***:***@'));
 })
 export default mongo;

@@ -355,6 +355,30 @@ app.get('/api/leetcode/problem/:id', async (req, res) => {
 
 
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'OK', 
+        message: 'Collaborative Code Editor Backend is running',
+        timestamp: new Date().toISOString(),
+        port: PORT
+    });
+});
+
+// Root endpoint
+app.get('/', (req, res) => {
+    res.status(200).json({ 
+        message: 'Collaborative Code Editor Backend API',
+        version: '1.0.0',
+        endpoints: {
+            health: '/health',
+            auth: '/api/auth/*',
+            leetcode: '/api/leetcode/*',
+            compile: '/api/compile'
+        }
+    });
+});
+
 server.listen(PORT, () => {
-    console.log("Server running on port 3000")
+    console.log(`Server running on port ${PORT}`)
 });
