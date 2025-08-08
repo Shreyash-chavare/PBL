@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "app.js",
   "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node Backend/app.js",
@@ -29,7 +32,7 @@
     "leetcode-query": "^1.2.3",
     "mongoose": "^8.12.1",
     "nodemon": "^3.1.9",
-    "react-router-dom": "^7.2.0",
+
     "simple-peer": "^9.11.1",
     "socket.io": "^4.8.1"
   }
